@@ -4,15 +4,10 @@ import MainSocial from './prj_MainSocial';
 export type SongInfo = {
   nameSong: string;
   artistName: string;
-  duration: number;
-  songData: any; //
   navigation: any;
 };
 
-class Song extends Component<{
-  songInfo: SongInfo;
-  onPlaySong: (songInfo: SongInfo) => void;
-}> {
+class Song extends Component<{songInfo: SongInfo}> {
   render() {
     const {nameSong, artistName} = this.props.songInfo;
     return (

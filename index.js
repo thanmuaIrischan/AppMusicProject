@@ -7,6 +7,8 @@ import App from './App';
 
 import MainSocial from './prj_MainSocial';
 import PlaySongBar from './comp_PlaySongBar';
+import SwitchMain from './comp_SwitchMainBar';
 import {name as appName} from './app.json';
+import AppNavigator from './prj_AppNavigator';
 
-AppRegistry.registerComponent(appName, () => PlaySongBar);
+AppRegistry.registerComponent(appName, () => AppNavigator);

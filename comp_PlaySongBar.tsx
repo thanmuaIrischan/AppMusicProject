@@ -11,6 +11,10 @@ const PlaySongBar = () => {
     setIsPlaying(!isPlaying);
   };
 
+  const handleSliderChange = (value: number) => {
+    setCurrentTime(value);
+  };
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60); // Làm tròn số giây
@@ -39,7 +43,7 @@ const PlaySongBar = () => {
             minimumValue={0}
             maximumValue={duration}
             value={currentTime}
-            onValueChange={(value: number) => setCurrentTime(value)}
+            onValueChange={handleSliderChange}
             minimumTrackTintColor="#1EB1FC"
             maximumTrackTintColor="#8E8E93"
             thumbTintColor="#1EB1FC"
