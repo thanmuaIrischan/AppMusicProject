@@ -82,6 +82,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+                appAuthRedirectScheme: "http://192.168.1.12:8082/callback"
+        ]
     }
     signingConfigs {
         debug {
