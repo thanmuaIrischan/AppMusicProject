@@ -1,36 +1,44 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
-import MainSocial from './prj_MainSocial';
+import {useNavigation} from '@react-navigation/native';
+import {ShowPlaylistNavigationProp} from './types';
+
 export type PlaylistInfo = {
   namePlaylist: string;
   Description: string;
   DateReleased: string;
-  navigation: any;
   listSongs: any;
+  navigation: any;
 };
 
-class Playlist extends Component<{playlistInfo: PlaylistInfo}> {
-  render() {
-    const {namePlaylist, DateReleased} = this.props.playlistInfo;
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.buttonShowPlaylist}>
-          <Image
-            style={styles.image}
-            source={require('./assets/ShowPlaylist.png')}
-          />
-        </TouchableOpacity>
-        <View style={styles.contentPlaylist}>
-          <Text style={styles.namePlaylist}>{namePlaylist}</Text>
-          <Text style={styles.DateReleased}>{DateReleased}</Text>
-        </View>
-        <TouchableOpacity style={styles.buttonDeletePlaylist}>
-          <Image style={styles.image} source={require('./assets/Delete.png')} />
-        </TouchableOpacity>
+type PlaylistProps = {
+  playlistInfo: PlaylistInfo;
+};
+
+const Playlist: React.FC<PlaylistProps> = ({playlistInfo}) => {
+  const navigation = useNavigation<ShowPlaylistNavigationProp>();
+  const {namePlaylist, DateReleased} = playlistInfo;
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.buttonShowPlaylist}
+        onPress={() => navigation.navigate('ShowPlaylist')}>
+        <Image
+          style={styles.image}
+          source={require('./assets/ShowPlaylist.png')}
+        />
+      </TouchableOpacity>
+      <View style={styles.contentPlaylist}>
+        <Text style={styles.namePlaylist}>{namePlaylist}</Text>
+        <Text style={styles.DateReleased}>{DateReleased}</Text>
       </View>
-    );
-  }
-}
+      <TouchableOpacity style={styles.buttonDeletePlaylist}>
+        <Image style={styles.image} source={require('./assets/Delete.png')} />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -69,8 +77,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   buttonDeletePlaylist: {
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
     marginRight: 10,
   },
 });

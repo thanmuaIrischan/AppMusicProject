@@ -6,6 +6,8 @@ export type RootStackParamList = {
   MainMyPlaylist: undefined;
   ShowLyricsSong: undefined;
   Search: undefined;
+  AddNewPlaylist: undefined;
+  ShowPlaylist: undefined;
 };
 
 export type MainSocialNavigationProp = StackNavigationProp<
@@ -23,6 +25,14 @@ export type ShowLyricsSongNavigationProp = StackNavigationProp<
 export type SearchNavigationProp = StackNavigationProp<
   RootStackParamList,
   'Search'
+>;
+export type AddNewPlaylistNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'AddNewPlaylist'
+>;
+export type ShowPlaylistNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'ShowPlaylist'
 >;
 
 export type MainSocialRouteProp = RouteProp<RootStackParamList, 'MainSocial'>;

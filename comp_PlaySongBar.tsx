@@ -3,7 +3,10 @@ import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {useNavigation} from '@react-navigation/native';
 //
-import {ShowLyricsSongNavigationProp} from './types';
+import {
+  AddNewPlaylistNavigationProp,
+  ShowLyricsSongNavigationProp,
+} from './types';
 
 //
 const PlaySongBar = () => {
@@ -25,6 +28,7 @@ const PlaySongBar = () => {
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
   const navigation = useNavigation<ShowLyricsSongNavigationProp>();
+  const navigationNewPlaylist = useNavigation<AddNewPlaylistNavigationProp>();
   return (
     <View style={styles.PlaySongBarContainer}>
       {/* PlaySongBar : song name and like button */}
@@ -87,7 +91,9 @@ const PlaySongBar = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.rightButton}>
+          <TouchableOpacity
+            style={styles.rightButton}
+            onPress={() => navigationNewPlaylist.navigate('AddNewPlaylist')}>
             <Image
               style={styles.Button}
               source={require('./assets/AddPlaylist.png')}
@@ -126,8 +132,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   Button: {
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
     marginHorizontal: 5,
   },
   Slider: {

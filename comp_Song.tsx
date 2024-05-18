@@ -13,6 +13,7 @@ interface SongProps {
   songInfo: {
     nameSong: string;
     artistName: string;
+    songData: any;
     navigation: any;
   };
 }
