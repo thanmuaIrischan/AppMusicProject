@@ -1,5 +1,5 @@
 {
-  "name": "MusicApp",
+  "name": "musicapp",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,12 +10,21 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.2",
+    "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/slider": "^4.5.2",
+    "@react-navigation/bottom-tabs": "^6.5.20",
+    "@react-navigation/native": "^6.1.17",
+    "expo-app-auth": "^12.0.0",
+    "expo-linear-gradient": "^13.0.2",
+    "express": "^4.19.2",
     "react": "18.2.0",
     "react-native": "0.74.1",
+    "react-native-app-auth": "^7.2.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-responsive-screen": "^1.4.2",
-    "react-native-size-matters": "^0.4.2"
+    "react-native-size-matters": "^0.4.2",
+    "react-native-webview": "^13.10.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -36,5 +45,10 @@
   },
   "engines": {
     "node": ">=18"
-  }
+  },
+  "description": "<<<<<<< HEAD\r # AppMusicProject\r =======\r This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
