@@ -19,10 +19,12 @@ import SwitchMain from './comp_SwitchMainBar';
 import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
 //
-function MainMyPlaylist() {
+import {useNavigation} from '@react-navigation/native';
+//
+function ShowLyricsSong() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
-
+  const navigation = useNavigation();
   // Danh sách các bài hát
 
   const handleScroll = (event: any) => {
@@ -38,46 +40,32 @@ function MainMyPlaylist() {
     }
   };
 
-  // Render hidden components only if hideComponents is false
-  {
-    !hideComponents && (
-      <>
-        <SwitchMain />
-        <View style={styles.SeeAllNewSongContainer}>
-          <TouchableOpacity>
-            <Text style={styles.seeAllText}>See All</Text>
-          </TouchableOpacity>
-        </View>
-      </>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
-              style={styles.searchIcon}
-              source={require('./assets/Search.png')}
+              style={styles.ReturnIcon}
+              source={require('./assets/Return.png')}
             />
           </TouchableOpacity>
         </View>
-
-        {/* SwitchMainContainer */}
-        <SwitchMain />
         {/* SeeAllNewSongContainer */}
-        <View style={styles.SeeAllNewSongContainer}>
-          <Text style={styles.seeAllText}>My Playlists</Text>
+        <View style={styles.NameSongContainer}>
+          <Text style={styles.nameSongText}>
+            Name songhello albumhello albumhello albumhello album
+          </Text>
         </View>
 
         {/* ScrollView */}
         <ScrollView
-          contentContainerStyle={styles.scrollContainerNewSong}
+          contentContainerStyle={styles.scrollContainerLyrics}
           onScroll={handleScroll}
           scrollEventThrottle={16}>
           {/* lyrics */}
+          <Text style={styles.lyricsText}>lyric here</Text>
         </ScrollView>
         <PlaySongBar />
       </View>
@@ -98,51 +86,40 @@ const styles = StyleSheet.create({
     width: '100%',
     height: hp('8%'),
     justifyContent: 'center',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
-  searchIcon: {
+  ReturnIcon: {
     width: 50,
     height: 50,
-    marginRight: 10,
+    marginLeft: 10,
   },
-  scrollContainerNewSong: {},
-  SeeAllNewSongContainer: {
+  scrollContainerLyrics: {
+    backgroundColor: '#D9B2C6',
+    alignItems: 'center',
+  },
+  NameSongContainer: {
     flexDirection: 'row',
     width: '100%',
-    height: hp('5%'),
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    height: hp('15%'),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  seeAllText: {
+
+  nameSongText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 30,
     marginRight: 15,
     marginLeft: 15,
     marginBottom: 15,
   },
-
-  // comp_playsongbar.tsx
-  PlaySongBarContainer: {
-    width: '100%',
-    height: hp('17%'),
-    backgroundColor: '#60539C',
-  },
-  SongNameContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  LikeButton: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-    marginTop: 10,
-  },
-  SongNameText: {
-    color: 'black',
-    fontSize: 25,
-    marginTop: 10,
-    marginLeft: 15,
+  lyricsText: {
+    color: 'white',
+    fontSize: 20,
+    marginRight: 15,
+    marginLeft: 35,
+    marginBottom: 15,
+    marginTop: 15,
   },
 });
 
-export default MainMyPlaylist;
+export default ShowLyricsSong;

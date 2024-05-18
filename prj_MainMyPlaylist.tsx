@@ -19,6 +19,8 @@ import SwitchMain from './comp_SwitchMainBar';
 import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
 //
+import HeaderBar from './comp_HeaderBar';
+//
 function MainMyPlaylist() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
@@ -107,14 +109,7 @@ function MainMyPlaylist() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity>
-            <Image
-              style={styles.searchIcon}
-              source={require('./assets/Search.png')}
-            />
-          </TouchableOpacity>
-        </View>
+        <HeaderBar />
 
         {/* SwitchMainContainer */}
         <SwitchMain />

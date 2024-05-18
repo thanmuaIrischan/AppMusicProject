@@ -20,6 +20,7 @@ import PlaySongBar from './comp_PlaySongBar';
 //
 import {useNavigation} from '@react-navigation/native';
 //
+import HeaderBar from './comp_HeaderBar';
 
 function MainSocial() {
   const [hideComponents, setHideComponents] = useState(false);
@@ -73,14 +74,7 @@ function MainSocial() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity>
-            <Image
-              style={styles.searchIcon}
-              source={require('./assets/Search.png')}
-            />
-          </TouchableOpacity>
-        </View>
+        <HeaderBar />
 
         {/* SwitchMainContainer */}
         <SwitchMain />
@@ -113,17 +107,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0A0022',
-  },
-  header: {
-    width: '100%',
-    height: hp('8%'),
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  searchIcon: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
   },
   scrollContainerNewSong: {},
   SeeAllNewSongContainer: {

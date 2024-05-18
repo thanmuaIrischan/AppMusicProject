@@ -1,37 +1,68 @@
-import React, {Component} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
-import MainSocial from './prj_MainSocial';
-export type SongInfo = {
-  nameSong: string;
-  artistName: string;
-  navigation: any;
-};
+import React, {useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Modal,
+  Alert,
+} from 'react-native';
 
-class Song extends Component<{songInfo: SongInfo}> {
-  render() {
-    const {nameSong, artistName} = this.props.songInfo;
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.buttonPlaySong}>
-          <Image
-            style={styles.image}
-            source={require('./assets/PlaySong.png')}
-          />
-        </TouchableOpacity>
-        <View style={styles.contentSong}>
-          <Text style={styles.nameSong}>{nameSong}</Text>
-          <Text style={styles.artistName}>{artistName}</Text>
-        </View>
-        <TouchableOpacity style={styles.buttonAddSongToPlayList}>
-          <Image
-            style={styles.image}
-            source={require('./assets/AddSongToPlaylist.png')}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  }
+interface SongProps {
+  songInfo: {
+    nameSong: string;
+    artistName: string;
+    navigation: any;
+  };
 }
+
+const Song: React.FC<SongProps> = ({songInfo}) => {
+  const {nameSong, artistName} = songInfo;
+  const [modalVisible, setModalVisible] = useState(false);
+
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.buttonPlaySong}>
+        <Image style={styles.image} source={require('./assets/PlaySong.png')} />
+      </TouchableOpacity>
+      <View style={styles.contentSong}>
+        <Text style={styles.nameSong}>{nameSong}</Text>
+        <Text style={styles.artistName}>{artistName}</Text>
+      </View>
+      <TouchableOpacity
+        style={styles.buttonAddSongToPlayList}
+        onPress={() => setModalVisible(true)}>
+        <Image
+          style={styles.image}
+          source={require('./assets/AddSongToPlaylist.png')}
+        />
+      </TouchableOpacity>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Add Song to Playlist</Text>
+            {/* Here you can render your playlist items and add functionality */}
+            <TouchableOpacity
+              style={{...styles.openButton, backgroundColor: '#2196F3'}}
+              onPress={() => {
+                setModalVisible(false);
+              }}>
+              <Text style={styles.textStyle}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -74,6 +105,47 @@ const styles = StyleSheet.create({
     height: 30,
     marginRight: 10,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  openButton: {
+    backgroundColor: '#F194FF',
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+  },
 });
 
 export default Song;
+export type SongInfo = {
+  nameSong: string;
+  artistName: string;
+  navigation: any;
+};

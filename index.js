@@ -10,5 +10,6 @@ import PlaySongBar from './comp_PlaySongBar';
 import SwitchMain from './comp_SwitchMainBar';
 import {name as appName} from './app.json';
 import AppNavigator from './prj_AppNavigator';
+import ShowLyricsSong from './prj_ShowLyricsSong';
 
 AppRegistry.registerComponent(appName, () => AppNavigator);
