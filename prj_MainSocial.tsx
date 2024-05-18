@@ -15,76 +15,32 @@ import Song, {SongInfo} from './comp_Song'; // Import Song component and SongInf
 import React, {useState, useRef} from 'react';
 // import component SwitchMain
 import SwitchMain from './comp_SwitchMainBar';
+
+import PlaySongBar from './comp_PlaySongBar';
 //
+import {useNavigation} from '@react-navigation/native';
+//
+import HeaderBar from './comp_HeaderBar';
+
 function MainSocial() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
+  const navigation = useNavigation();
 
   // Danh sách các bài hát
   const songs: SongInfo[] = [
-    {
-      nameSong: 'Song 1',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 2',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 3',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 4',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 5',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 5',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 5',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 5',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
-    {
-      nameSong: 'Song 5',
-      artistName: 'Artist 1',
-      duration: 200,
-      songData: null,
-      navigation: null,
-    },
+    {nameSong: 'Song 1', artistName: 'Artist 1', navigation: null},
+    {nameSong: 'Song 2', artistName: 'Artist 2', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
+    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
   ];
 
   const handleScroll = (event: any) => {
@@ -118,23 +74,15 @@ function MainSocial() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity>
-            <Image
-              style={styles.searchIcon}
-              source={require('./assets/Search.png')}
-            />
-          </TouchableOpacity>
-        </View>
+        <HeaderBar />
+
         {/* SwitchMainContainer */}
         <SwitchMain />
         {/* SeeAllNewSongContainer */}
         <View style={styles.SeeAllNewSongContainer}>
           <Text style={styles.seeAllText}>New Songs</Text>
-          <TouchableOpacity>
-            <Text style={styles.seeAllText}>See All</Text>
-          </TouchableOpacity>
         </View>
+
         {/* ScrollView */}
         <ScrollView
           contentContainerStyle={styles.scrollContainerNewSong}
@@ -145,21 +93,7 @@ function MainSocial() {
             <Song key={index} songInfo={song} />
           ))}
         </ScrollView>
-        {/* PlaySongBar :  song name and like button  */}
-        <View style={styles.PlaySongBarContainer}>
-          {/* PlaySongBar :  song name and like button  */}
-          <View style={styles.SongNameContainer}>
-            <Text style={styles.SongNameText}>Song Name</Text>
-            <TouchableOpacity>
-              <Image
-                style={styles.LikeButton}
-                source={require('./assets/LikeButton.png')}
-              />
-            </TouchableOpacity>
-          </View>
-          <View></View>
-        </View>
-        //
+        <PlaySongBar />
       </View>
     </SafeAreaView>
   );
@@ -173,17 +107,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0A0022',
-  },
-  header: {
-    width: '100%',
-    height: hp('8%'),
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  searchIcon: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
   },
   scrollContainerNewSong: {},
   SeeAllNewSongContainer: {

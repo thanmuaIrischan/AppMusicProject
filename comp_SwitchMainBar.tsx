@@ -13,16 +13,27 @@ import {
 } from 'react-native-responsive-screen';
 import Song, {SongInfo} from './comp_Song'; // Import Song component and SongInfo type
 import React, {useState, useRef} from 'react';
+//
+import {useNavigation} from '@react-navigation/native';
+//
+import {MainSocialNavigationProp, MainMyPlaylistNavigationProp} from './types';
 const SwitchMain = () => {
+  const navigation = useNavigation<
+    MainSocialNavigationProp & MainMyPlaylistNavigationProp
+  >();
   return (
     <View style={styles.SwitchMainContainer}>
-      <TouchableOpacity style={styles.SocialButton}>
+      <TouchableOpacity
+        style={styles.SocialButton}
+        onPress={() => navigation.navigate('MainSocial')}>
         <Image
           source={require('./assets/SocialIcon.png')}
           style={styles.buttonImage}></Image>
         <Text style={styles.buttonTextSocial}>Social</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.MyPlaylistButton}>
+      <TouchableOpacity
+        style={styles.MyPlaylistButton}
+        onPress={() => navigation.navigate('MainMyPlaylist')}>
         <Image
           source={require('./assets/MyPlaylistIcon.png')}
           style={styles.buttonImage}></Image>

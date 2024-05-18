@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
+import {useNavigation} from '@react-navigation/native';
+//
+import {ShowLyricsSongNavigationProp} from './types';
 
+//
 const PlaySongBar = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -11,12 +15,16 @@ const PlaySongBar = () => {
     setIsPlaying(!isPlaying);
   };
 
+  const handleSliderChange = (value: number) => {
+    setCurrentTime(value);
+  };
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60); // Làm tròn số giây
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
-
+  const navigation = useNavigation<ShowLyricsSongNavigationProp>();
   return (
     <View style={styles.PlaySongBarContainer}>
       {/* PlaySongBar : song name and like button */}
@@ -39,7 +47,7 @@ const PlaySongBar = () => {
             minimumValue={0}
             maximumValue={duration}
             value={currentTime}
-            onValueChange={(value: number) => setCurrentTime(value)}
+            onValueChange={handleSliderChange}
             minimumTrackTintColor="#1EB1FC"
             maximumTrackTintColor="#8E8E93"
             thumbTintColor="#1EB1FC"
@@ -47,7 +55,9 @@ const PlaySongBar = () => {
           <Text style={styles.DurationText}>{formatTime(duration)}</Text>
         </View>
         <View style={styles.layoutPlaySongButton}>
-          <TouchableOpacity style={styles.leftButton}>
+          <TouchableOpacity
+            style={styles.leftButton}
+            onPress={() => navigation.navigate('ShowLyricsSong')}>
             <Image
               style={styles.Button}
               source={require('./assets/LyricsSong.png')}
