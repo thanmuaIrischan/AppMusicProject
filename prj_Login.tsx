@@ -1,27 +1,40 @@
 import React, { useState } from 'react';
 import { View, Button, Text } from 'react-native';
-//import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { authorize } from 'react-native-app-auth';
 
-const App = () => {
+const Login = () => {
   const [token, setToken] = useState('');
-  //const navigation = useNavigation();
+  const navigation = useNavigation();
+
+
 
   const config = {
     issuer: 'https://accounts.spotify.com',
     clientId: '4f77b5784e0542d7ba269907f8d0f82f',
-    redirectUrl: 'http://192.168.1.12:8082/callback',
-    scopes: ['user-read-private', 'user-read-email'],
+    redirectUrl: 'appifity-musicapp://callback',
+    scopes: [
+    'user-read-email',
+    'user-library-read',
+    'user-read-recently-played',
+    'user-top-read',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'streaming'
+    ],
   };
 
   const handleAuth = async () => {
     try {
       const result = await authorize(config);
       setToken(result.accessToken);
-      console.log("1");
-      //navigation.navigate('AnotherForm');
+      console.log("Authenticated successfully");
+      navigation.navigate('MainSocial');
     } catch (error) {
-      console.error(error);
+      console.error('Authentication error:', error);
+      console.error('Error details:', error.message);
     }
   };
 
@@ -37,4 +50,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Login;
