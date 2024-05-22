@@ -55,7 +55,7 @@ function ShowLyricsSong() {
         {/* SeeAllNewSongContainer */}
         <View style={styles.NameSongContainer}>
           <Text style={styles.nameSongText}>
-            Name songhello albumhello albumhello albumhello album
+            Map
           </Text>
         </View>
 
@@ -65,7 +65,29 @@ function ShowLyricsSong() {
           onScroll={handleScroll}
           scrollEventThrottle={16}>
           {/* lyrics */}
-          <Text style={styles.lyricsText}>lyric here</Text>
+          <Text style={styles.lyricsText}>
+                                          Oh, I was there for you, oh, in your darkest time
+                                          Oh, I was there for you, oh, in your darkest night
+                                          Oh, I was there for you, oh, in your darkest time
+                                          Oh, I was there for you, oh, in your darkest night
+
+                                          [Chorus]
+                                          But I wonder, where were you?
+                                          When I was at my worst, down on my knees
+                                          And you said you had my back
+                                          So I wonder, where were you?
+                                          When all the roads you took came back to me
+
+                                          [Post-Chorus]
+                                          So I'm following the map that leads to you
+                                          The map that leads to you
+                                          Ain't nothing I can do
+                                          The map that leads to you
+                                          Following, following, following to you
+                                          The map that leads to you
+                                          Ain't nothing I can do
+                                          The map that leads to you
+                                          Following, following, following</Text>
         </ScrollView>
         <PlaySongBar />
       </View>
