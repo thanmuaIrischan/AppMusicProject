@@ -7,6 +7,7 @@ buildscript {
         ndkVersion = "27.0.11718014"
         kotlinVersion = "1.9.22"
     }
+
     repositories {
         google()
         mavenCentral()
@@ -18,5 +19,6 @@ buildscript {
         classpath("com.google.gms:google-services:4.4.1")
     }
 }
+
 apply plugin: 'com.google.gms.google-services'
 apply plugin: "com.facebook.react.rootproject"

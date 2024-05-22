@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from './prj_Login';
 import MainSocial from './prj_MainSocial';
+import Test from './TestPlayMusic';
 
 const Stack = createStackNavigator();
 
@@ -12,6 +13,7 @@ const Navigator = () => {
       <Stack.Navigator initialRouteName="Login">
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="MainSocial" component={MainSocial} />
+        <Stack.Screen name="Test" component={Test} />
       </Stack.Navigator>
     </NavigationContainer>
   );
