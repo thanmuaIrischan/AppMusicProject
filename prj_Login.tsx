@@ -3,7 +3,7 @@ import { View, Button, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { authorize } from 'react-native-app-auth';
 
-const Login: React.FC = () => {
+const Login = () => {
   const [token, setToken] = useState('');
   const navigation = useNavigation();
 

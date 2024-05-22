@@ -116,7 +116,6 @@ dependencies {
     implementation ("androidx.browser:browser:1.0.0")
     implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation ("androidx.appcompat:appcompat-resources:1.6.1")
-    implementation project(':react-native-spotify-remote')
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
