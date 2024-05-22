@@ -83,7 +83,8 @@ android {
         versionCode 1
         versionName "1.0"
         manifestPlaceholders = [
-                appAuthRedirectScheme: "http://192.168.1.12:8082/callback"
+                appAuthRedirectScheme: 'com.musicapp',
+                appAuthRedirectScheme: "appifity-musicapp"
         ]
     }
     signingConfigs {
@@ -111,7 +112,11 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    //implementation("com.google.gms.google-services")
+    implementation ("com.spotify.android:auth:1.2.5")
+    implementation ("androidx.browser:browser:1.0.0")
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+    implementation ("androidx.appcompat:appcompat-resources:1.6.1")
+    implementation project(':react-native-spotify-remote')
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
