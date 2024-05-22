@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Login from './prj_Login';
 import MainSocial from './prj_MainSocial';
 import Test from './TestPlayMusic';
+import UserPlaylists from './TestLoadPlaylist'
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ const Navigator = () => {
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="MainSocial" component={MainSocial} />
         <Stack.Screen name="Test" component={Test} />
+        <Stack.Screen name="Playlist" component={UserPlaylists} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -29,7 +29,7 @@ const Login = () => {
       const result = await authorize(config);
       setToken(result.accessToken);
       console.log("Authenticated successfully");
-      navigation.navigate('Test', { token: result.accessToken });
+      navigation.navigate('Playlist', { token: result.accessToken });
     } catch (error) {
       console.error('Authentication error:', error);
       console.error('Error details:', error.message);

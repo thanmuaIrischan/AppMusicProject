@@ -36,7 +36,7 @@ const addSpotifyTrack = async (trackId, accessToken) => {
   }
 };
 
-const YourComponent = ({ token, trackId }) => {
+const PLayStop = ({ token, trackId }) => {
   const playbackState = usePlaybackState();
   const progress = useProgress();
 
@@ -120,7 +120,7 @@ const Test = () => {
         value={trackId}
         onChangeText={setTrackId}
       />
-      <YourComponent token={token} trackId={trackId} />
+      <PLayStop token={token} trackId={trackId} />
     </View>
   );
 };
