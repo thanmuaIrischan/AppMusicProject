@@ -29,19 +29,19 @@ function MainSocial() {
 
   // Danh sách các bài hát
   const songs: SongInfo[] = [
-    {nameSong: 'Song 1', artistName: 'Artist 1', navigation: null},
-    {nameSong: 'Song 2', artistName: 'Artist 2', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-    {nameSong: 'Song 3', artistName: 'Artist 3', navigation: null},
-  ];
+      {nameSong: 'Map', artistName: 'Maroon 5', navigation: null},
+      {nameSong: 'Tek it', artistName: 'Selena Gomez', navigation: null},
+      {nameSong: 'Ghost', artistName: 'Justin Bieber', navigation: null},
+      {nameSong: 'Love game', artistName: 'Lady gaga', navigation: null},
+      {nameSong: 'Is there someone else ?', artistName: 'The weeknd', navigation: null},
+      {nameSong: 'Take you dancing', artistName: 'jason', navigation: null},
+      {nameSong: 'Enough', artistName: 'Zara Larson', navigation: null},
+      {nameSong: 'Water', artistName: 'Tyla', navigation: null},
+      {nameSong: 'Die for you', artistName: 'The weeknd', navigation: null},
+      {nameSong: 'Map into light', artistName: 'The weeknd', navigation: null},
+      {nameSong: 'Experience', artistName: 'Ludovico', navigation: null},
+
+    ];
 
   const handleScroll = (event: any) => {
     // Specify the type of 'event' parameter

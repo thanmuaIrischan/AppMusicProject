@@ -9,6 +9,15 @@ import MainSocial from './prj_MainSocial';
 import PlaySongBar from './comp_PlaySongBar';
 import SwitchMain from './comp_SwitchMainBar';
 import {name as appName} from './app.json';
+
+import App from './prj_Login';
+
+AppRegistry.registerComponent(appName, () => App);
+import AppNavigator from './prj_AppNavigator';
+import ShowLyricsSong from './prj_ShowLyricsSong';
+
+AppRegistry.registerComponent(appName, () => AppNavigator);
+
 import Login from './prj_Login'
 import Navigator from './Navigator'
 
