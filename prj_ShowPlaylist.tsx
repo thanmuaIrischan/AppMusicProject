@@ -1,3 +1,4 @@
+import React, {useEffect, useState, useRef} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -6,57 +7,98 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Song, {SongInfo} from './comp_Song'; // Import Song component and SongInfo type
-import React, {useState, useRef} from 'react';
-// import component SwitchMain
-import SwitchMain from './comp_SwitchMainBar';
-
+import Song from './comp_Song';
 import PlaySongBar from './comp_PlaySongBar';
-//
-import {useNavigation} from '@react-navigation/native';
-//
-import HeaderBar from './comp_HeaderBar';
+import {useNavigation, useRoute} from '@react-navigation/native';
+
+// Function to get playlist details
+const getPlaylistDetails = async (playlistId, accessToken) => {
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/playlists/${playlistId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      console.error('Failed to fetch playlist details:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    const images = data.images ? data.images.map(image => image.url) : [];
+    const tracks = data.tracks
+      ? data.tracks.items.map(item => ({
+          name: item.track.name,
+          artistName: item.track.artists.map(artist => artist.name).join(', '),
+        }))
+      : [];
+
+    return {
+      name: data.name,
+      description: data.description,
+      images: images,
+      tracks: tracks,
+    };
+  } catch (error) {
+    console.error('Error fetching playlist details:', error.message);
+    return null;
+  }
+};
 
 function ShowPlaylist() {
   const [hideComponents, setHideComponents] = useState(false);
+  const [playlistDetails, setPlaylistDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
   const scrollOffset = useRef(0);
   const navigation = useNavigation();
+  const route = useRoute();
 
-  // Danh sách các bài hát
-  const songs: SongInfo[] = [
-    {nameSong: 'Map', artistName: 'Maroon 5', navigation: null},
-    {nameSong: 'Tek it', artistName: 'Selena Gomez', navigation: null},
-    {nameSong: 'Ghost', artistName: 'Justin Bieber', navigation: null},
-    {nameSong: 'Love game', artistName: 'Lady gaga', navigation: null},
-    {nameSong: 'Is there someone else ?', artistName: 'The weeknd', navigation: null},
-    {nameSong: 'Take you dancing', artistName: 'jason', navigation: null},
-    {nameSong: 'Enough', artistName: 'Zara Larson', navigation: null},
-    {nameSong: 'Water', artistName: 'Tyla', navigation: null},
-    {nameSong: 'Die for you', artistName: 'The weeknd', navigation: null},
-    {nameSong: 'Map into light', artistName: 'The weeknd', navigation: null},
-    {nameSong: 'Experience', artistName: 'Ludovico', navigation: null},
+  const {playlistId, token} = route.params; // Retrieve the playlist ID and access token from route params
 
-  ];
-
-  const handleScroll = (event: any) => {
-    // Specify the type of 'event' parameter
+  const handleScroll = event => {
     const offsetY = event.nativeEvent.contentOffset.y;
-    const isScrollingUp = offsetY > scrollOffset.current; // Check if scrolling up
-    scrollOffset.current = offsetY; // Update scroll offset
+    const isScrollingUp = offsetY > scrollOffset.current;
+    scrollOffset.current = offsetY;
 
     if (isScrollingUp) {
-      setHideComponents(true); // Hide components when scrolling up
+      setHideComponents(true);
     } else {
-      setHideComponents(false); // Show components when scrolling down
+      setHideComponents(false);
     }
   };
 
-  // Render hidden components only if hideComponents is false
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token || !playlistId) return;
+      const details = await getPlaylistDetails(playlistId, token);
+      setPlaylistDetails(details);
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [token, playlistId]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (!playlistDetails) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <Text style={styles.errorText}>Failed to load playlist details.</Text>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -70,10 +112,18 @@ function ShowPlaylist() {
             />
           </TouchableOpacity>
         </View>
+        {/* Image near Playlist Title */}
+        <View style={styles.imageContainer}>
+          {playlistDetails.images[0] ? (
+            <Image
+              style={styles.playlistImage}
+              source={{uri: playlistDetails.images[0]}}
+            />
+          ) : null}
+        </View>
+        {/* Playlist Title */}
         <View style={styles.ContentPlaylist}>
-          <Text style={styles.Title}>Playlist Name</Text>
-          <Text style={styles.Description}>Description</Text>
-          <View style={styles.containerDescription}></View>
+          <Text style={styles.Title}>{playlistDetails.name}</Text>
         </View>
         {/* ScrollView */}
         <ScrollView
@@ -81,10 +131,11 @@ function ShowPlaylist() {
           onScroll={handleScroll}
           scrollEventThrottle={16}>
           {/* List of songs */}
-          {songs.map((song, index) => (
+          {playlistDetails.tracks.map((song, index) => (
             <Song key={index} songInfo={song} />
           ))}
         </ScrollView>
+        {/* PlaySongBar */}
         <PlaySongBar />
       </View>
     </SafeAreaView>
@@ -92,6 +143,25 @@ function ShowPlaylist() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0A0022',
+  },
+  imageContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  playlistImage: {
+    width: 200,
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 10,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#0A0022',
+  },
   header: {
     width: '100%',
     height: hp('8%'),
@@ -102,14 +172,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginLeft: 10,
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#0A0022',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: '#0A0022',
   },
   scrollContainerNewSong: {},
   SeeAllNewSongContainer: {
@@ -128,19 +190,21 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 30,
     fontWeight: 'bold',
-    marginLeft: 10,
+    alignSelf: 'center',
   },
-  Description: {
-    color: 'white',
-    fontSize: 20,
-    marginLeft: 10,
-  },
+
   containerDescription: {
     width: '90%',
     height: hp('10%'),
     backgroundColor: '#60539C',
     marginLeft: 10,
     borderRadius: 10,
+  },
+  errorText: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: hp('20%'),
   },
 });
 

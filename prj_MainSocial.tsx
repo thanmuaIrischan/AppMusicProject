@@ -21,27 +21,21 @@ import PlaySongBar from './comp_PlaySongBar';
 import {useNavigation} from '@react-navigation/native';
 //
 import HeaderBar from './comp_HeaderBar';
+import {MainSocialNavigationProp, MainSocialRouteProp} from './types';
 
-function MainSocial() {
+type MainSocialProps = {
+  navigation: MainSocialNavigationProp;
+  route: MainSocialRouteProp;
+};
+
+const MainSocial: React.FC<MainSocialProps> = ({navigation, route}) => {
+  // You can now access the token from the route params
+  const token = route.params?.token;
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
-  const navigation = useNavigation();
 
   // Danh sách các bài hát
-  const songs: SongInfo[] = [
-      {nameSong: 'Map', artistName: 'Maroon 5', navigation: null},
-      {nameSong: 'Tek it', artistName: 'Selena Gomez', navigation: null},
-      {nameSong: 'Ghost', artistName: 'Justin Bieber', navigation: null},
-      {nameSong: 'Love game', artistName: 'Lady gaga', navigation: null},
-      {nameSong: 'Is there someone else ?', artistName: 'The weeknd', navigation: null},
-      {nameSong: 'Take you dancing', artistName: 'jason', navigation: null},
-      {nameSong: 'Enough', artistName: 'Zara Larson', navigation: null},
-      {nameSong: 'Water', artistName: 'Tyla', navigation: null},
-      {nameSong: 'Die for you', artistName: 'The weeknd', navigation: null},
-      {nameSong: 'Map into light', artistName: 'The weeknd', navigation: null},
-      {nameSong: 'Experience', artistName: 'Ludovico', navigation: null},
-
-    ];
+  const songs: SongInfo[] = [];
 
   const handleScroll = (event: any) => {
     // Specify the type of 'event' parameter
@@ -60,7 +54,7 @@ function MainSocial() {
   {
     !hideComponents && (
       <>
-        <SwitchMain />
+        <SwitchMain token={token} />
         <View style={styles.SeeAllNewSongContainer}>
           <TouchableOpacity>
             <Text style={styles.seeAllText}>See All</Text>
@@ -77,7 +71,7 @@ function MainSocial() {
         <HeaderBar />
 
         {/* SwitchMainContainer */}
-        <SwitchMain />
+        <SwitchMain token={token} />
         {/* SeeAllNewSongContainer */}
         <View style={styles.SeeAllNewSongContainer}>
           <Text style={styles.seeAllText}>New Songs</Text>
@@ -97,7 +91,7 @@ function MainSocial() {
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   safeArea: {

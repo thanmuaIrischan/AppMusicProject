@@ -1,104 +1,114 @@
-// UserPlaylists.tsx
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { useRoute } from '@react-navigation/native'; // Import useRoute
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
+import {useRoute} from '@react-navigation/native';
+import Playlist, {PlaylistInfo} from './comp_Playlist'; // Import Playlist component and PlaylistInfo type
 
-interface Playlist {
+interface SpotifyPlaylist {
   id: string;
   name: string;
+  description: string;
 }
 
-interface Track{
-    id: string;
-    name: string;
-}
+const getUserID = async (accessToken: string) => {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-const getUserID = async (accessToken) => {
-  const response = await fetch('https://api.spotify.com/v1/me', {
-    headers: {
-     Authorization: `Bearer ${accessToken}`,
-    },
-  });
-  if (!response.ok) {
-      console.error('Failed to fetch track URL');
+    if (!response.ok) {
+      console.error('Failed to fetch user ID:', response.status);
       return '';
-  }
-  const data = await response.json();
-  return data.id;
-};
+    }
 
-const getAllUserPLaylist = async (user_id, accessToken) => {
-  const response = await fetch(`https://api.spotify.com/v1/users/${user_id}/playlists`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    console.error('Failed to fetch track URL');
+    const data = await response.json();
+    return data.id;
+  } catch (error) {
+    console.error('Error fetching user ID:', error.message);
     return '';
   }
-
-  const data = await response.json();
-  const playlists = data.items.map((playlist: any) => ({
-    id: playlist.id,
-    name: playlist.name,
-  }));
-  return playlists;
 };
 
-const getPlaylistTracks = async (playlist_id, accessToken) => {
-  const response = await fetch(`https://api.spotify.com/v1/playlists/${playlist_id}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+const getAllUserPlaylists = async (
+  userId: string,
+  accessToken: string,
+): Promise<SpotifyPlaylist[]> => {
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
 
-  if (!response.ok) {
-    console.error('Failed to fetch track URL');
-    return '';
+    if (!response.ok) {
+      console.error('Failed to fetch playlists:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    return data.items.map((playlist: any) => ({
+      id: playlist.id,
+      name: playlist.name,
+    }));
+  } catch (error) {
+    console.error('Error fetching playlists:', error.message);
+    return [];
   }
-
-  const data = await response.json();
-  const tracks = data.tracks.items.map((track: any) => ({
-    id: track.TrackObject.id,
-    name: track.TrackObject.name,
-  }));
-  return playlistIds;
 };
 
 const UserPlaylists = () => {
-  const route = useRoute(); // Access the route object
-  const {token} = route.params; // Retrieve the access token from route params
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const route = useRoute();
+  const {token} = route.params;
+  const [playlists, setPlaylists] = useState<PlaylistInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [id, setId] = useState('');
+  const [userId, setUserId] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!token) return; // If access token is not available, return
-      const userId = await getUserID(token);
-      setId(userId);
-      if (userId) {
-        const playlistData = await getAllUserPLaylist(userId, token);
-        setPlaylists(playlistData);
+      if (!token) return;
+      const fetchedUserId = await getUserID(token);
+      setUserId(fetchedUserId);
+      if (fetchedUserId) {
+        const fetchedPlaylists = await getAllUserPlaylists(
+          fetchedUserId,
+          token,
+        );
+        setPlaylists(fetchedPlaylists);
       }
       setLoading(false);
     };
 
     fetchData();
-  }, [token]); // useEffect dependency
+  }, [token]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{id}</Text>
+      <Text style={styles.title}>User ID: {userId}</Text>
       <FlatList
         data={playlists}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.playlistItem}>
-            <Text>{item.name}</Text>
-          </View>
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <Playlist
+            playlistInfo={{
+              id: item.id,
+              name: item.name,
+              description: item.description,
+            }}
+          />
         )}
       />
     </View>
@@ -115,11 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
-  },
-  playlistItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
 });
 

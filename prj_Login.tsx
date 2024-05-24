@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Button, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { authorize } from 'react-native-app-auth';
+import React, {useState} from 'react';
+import {View, Button, Text} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {authorize} from 'react-native-app-auth';
 
 const Login = () => {
   const [token, setToken] = useState('');
@@ -20,7 +20,7 @@ const Login = () => {
       'playlist-read-collaborative',
       'user-read-playback-state',
       'user-modify-playback-state',
-      'streaming'
+      'streaming',
     ],
   };
 
@@ -28,8 +28,8 @@ const Login = () => {
     try {
       const result = await authorize(config);
       setToken(result.accessToken);
-      console.log("Authenticated successfully");
-      navigation.navigate('Playlist', { token: result.accessToken });
+      console.log('Authenticated successfully');
+      navigation.navigate('MainMyPlaylist', {token: result.accessToken});
     } catch (error) {
       console.error('Authentication error:', error);
       console.error('Error details:', error.message);

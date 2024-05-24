@@ -11,15 +11,18 @@ import {
 
 interface SongProps {
   songInfo: {
-    nameSong: string;
-    artistName: string;
-    songData: any;
-    navigation: any;
+    name: string;
+    artists: {name: string}[];
+    album: {images: {url: string}[]};
   };
 }
 
 const Song: React.FC<SongProps> = ({songInfo}) => {
-  const {nameSong, artistName} = songInfo;
+  if (!songInfo) {
+    return null; // Trả về null hoặc một phần tử trống nếu không có songInfo
+  }
+
+  const {name, artists, album} = songInfo;
   const [modalVisible, setModalVisible] = useState(false);
 
   return (
@@ -28,8 +31,10 @@ const Song: React.FC<SongProps> = ({songInfo}) => {
         <Image style={styles.image} source={require('./assets/PlaySong.png')} />
       </TouchableOpacity>
       <View style={styles.contentSong}>
-        <Text style={styles.nameSong}>{nameSong}</Text>
-        <Text style={styles.artistName}>{artistName}</Text>
+        <Text style={styles.nameSong}>{name}</Text>
+        <Text style={styles.artistName}>
+          {artists && artists.length > 0 ? artists[0].name : ''}
+        </Text>
       </View>
       <TouchableOpacity
         style={styles.buttonAddSongToPlayList}
@@ -68,8 +73,8 @@ const Song: React.FC<SongProps> = ({songInfo}) => {
 const styles = StyleSheet.create({
   container: {
     width: '100%', // Adjust to be responsive
-    height: 100,
-    backgroundColor: '#60539C',
+    height: 80,
+    //backgroundColor: '#60539C',
     flexDirection: 'row',
     alignItems: 'center', // Center content vertically
     padding: 10, // Add some padding
@@ -80,8 +85,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   buttonPlaySong: {
-    width: 70,
-    height: 70,
+    width: 50,
+    height: 50,
     backgroundColor: '#503399',
     borderRadius: 10,
     justifyContent: 'center', // Center icon inside button
@@ -102,8 +107,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   buttonAddSongToPlayList: {
-    width: 30,
-    height: 30,
+    width: 20,
+    height: 20,
     marginRight: 10,
   },
   centeredView: {
@@ -146,7 +151,7 @@ const styles = StyleSheet.create({
 
 export default Song;
 export type SongInfo = {
-  nameSong: string;
-  artistName: string;
-  navigation: any;
+  name: string;
+  artists: {name: string}[];
+  album: {images: {url: string}[]};
 };

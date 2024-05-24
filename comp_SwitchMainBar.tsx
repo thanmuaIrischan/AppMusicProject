@@ -17,7 +17,11 @@ import React, {useState, useRef} from 'react';
 import {useNavigation} from '@react-navigation/native';
 //
 import {MainSocialNavigationProp, MainMyPlaylistNavigationProp} from './types';
-const SwitchMain = () => {
+type SwitchMainProps = {
+  token: string;
+};
+
+const SwitchMain: React.FC<SwitchMainProps> = ({token}) => {
   const navigation = useNavigation<
     MainSocialNavigationProp & MainMyPlaylistNavigationProp
   >();
@@ -25,7 +29,9 @@ const SwitchMain = () => {
     <View style={styles.SwitchMainContainer}>
       <TouchableOpacity
         style={styles.SocialButton}
-        onPress={() => navigation.navigate('MainSocial')}>
+        onPress={() => {
+          navigation.navigate('MainSocial', {token});
+        }}>
         <Image
           source={require('./assets/SocialIcon.png')}
           style={styles.buttonImage}></Image>
@@ -33,7 +39,7 @@ const SwitchMain = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.MyPlaylistButton}
-        onPress={() => navigation.navigate('MainMyPlaylist')}>
+        onPress={() => navigation.navigate('MainMyPlaylist', {token})}>
         <Image
           source={require('./assets/MyPlaylistIcon.png')}
           style={styles.buttonImage}></Image>

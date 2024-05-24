@@ -1,45 +1,28 @@
+import React, {useState} from 'react';
 import {
   Image,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
-import Song, {SongInfo} from './comp_Song'; // Import Song component and SongInfo type
-import React, {useState, useRef} from 'react';
-// import component SwitchMain
-import SwitchMain from './comp_SwitchMainBar';
+import {useNavigation, RouteProp} from '@react-navigation/native';
+import {RootStackParamList, AddNewPlaylistNavigationProp} from './types'; // Import types
 
-import PlaySongBar from './comp_PlaySongBar';
-import Playlist, {PlaylistInfo} from './comp_Playlist';
-//
-import {useNavigation} from '@react-navigation/native';
-import {TextInput} from 'react-native-gesture-handler';
-import {s} from 'react-native-size-matters';
-//
-function AddNewPlaylist() {
-  const [hideComponents, setHideComponents] = useState(false);
-  const scrollOffset = useRef(0);
-  const navigation = useNavigation();
-  // Danh sách các bài hát
+type AddNewPlaylistProps = {
+  route: RouteProp<RootStackParamList, 'AddNewPlaylist'>; // RouteProp for AddNewPlaylist
+};
 
-  const handleScroll = (event: any) => {
-    // Specify the type of 'event' parameter
-    const offsetY = event.nativeEvent.contentOffset.y;
-    const isScrollingUp = offsetY > scrollOffset.current; // Check if scrolling up
-    scrollOffset.current = offsetY; // Update scroll offset
+const AddNewPlaylist: React.FC<AddNewPlaylistProps> = ({route}) => {
+  const {accessToken, userId} = route.params; // Retrieve accessToken and userId from route params
+  const [playlistName, setPlaylistName] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const navigation = useNavigation<AddNewPlaylistNavigationProp>();
 
-    if (isScrollingUp) {
-      setHideComponents(true); // Hide components when scrolling up
-    } else {
-      setHideComponents(false); // Show components when scrolling down
-    }
+  const handleCreatePlaylist = async () => {
+    // Your createNewPlaylist function implementation here
   };
 
   return (
@@ -49,103 +32,88 @@ function AddNewPlaylist() {
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image
-              style={styles.ReturnIcon}
+              style={styles.returnIcon}
               source={require('./assets/Return.png')}
             />
           </TouchableOpacity>
         </View>
-        <View style={styles.WrapperContainer}>
-          <View style={styles.AddNewPlaylistContainer}>
-            <Text style={styles.text}>Name Playlists</Text>
-            <TextInput style={styles.Input}></TextInput>
-            <Text style={styles.text}>Description</Text>
-            <TextInput
-              style={styles.textInput}
-              textAlignVertical="top"
-              multiline
-              numberOfLines={4} // Số lượng dòng mặc định hiển thị
-              placeholder=""
-            />
-            <TouchableOpacity style={styles.SaveButton}>
-              <Text style={styles.textSave}>Save</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
-        <PlaySongBar />
+        {/* Playlist Form */}
+        <View style={styles.formContainer}>
+          <Text style={styles.label}>Playlist Name</Text>
+          <TextInput
+            style={styles.input}
+            value={playlistName}
+            onChangeText={setPlaylistName}
+          />
+          <Text style={styles.label}>Description</Text>
+          <TextInput
+            style={styles.input}
+            value={description}
+            onChangeText={setDescription}
+            multiline
+          />
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={handleCreatePlaylist}>
+            <Text style={styles.createButtonText}>Create Playlist</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0A0022',
+    backgroundColor: '#fff', // Adjust as needed
   },
   container: {
     flex: 1,
-    backgroundColor: '#0A0022',
+    backgroundColor: '#fff', // Adjust as needed
   },
   header: {
     width: '100%',
-    height: hp('8%'),
+    height: 50, // Adjust as needed
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
-  ReturnIcon: {
-    width: 50,
-    height: 50,
-    marginLeft: 10,
+  returnIcon: {
+    width: 50, // Adjust as needed
+    height: 50, // Adjust as needed
+    marginLeft: 10, // Adjust as needed
   },
-  WrapperContainer: {
+  formContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20, // Adjust as needed
+  },
+  label: {
+    fontSize: 18, // Adjust as needed
+    marginBottom: 10, // Adjust as needed
+  },
+  input: {
     width: '100%',
-    height: hp('70%'),
+    height: 40, // Adjust as needed
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    marginBottom: 20, // Adjust as needed
+    paddingHorizontal: 10, // Adjust as needed
+  },
+  createButton: {
+    width: '100%',
+    height: 40, // Adjust as needed
+    backgroundColor: 'blue', // Adjust as needed
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 5,
   },
-  AddNewPlaylistContainer: {
-    height: hp('60%'),
-    width: '90%',
-    justifyContent: 'flex-start',
-    backgroundColor: '#D9B2C6',
-    alignItems: 'flex-start',
-    borderRadius: 30,
-  },
-  text: {
-    fontSize: 20,
-    color: '#515098',
-    padding: 10,
-  },
-  Input: {
-    width: '94%',
-    backgroundColor: '#896BC5',
-    borderRadius: 50,
-    marginBottom: 10,
-    marginLeft: 10,
-    fontSize: 20,
-  },
-  textInput: {
-    width: '94%',
-    height: 200,
-    backgroundColor: '#896BC5',
-    borderRadius: 20,
-    marginBottom: 10,
-    marginLeft: 10,
-    fontSize: 20,
-  },
-  SaveButton: {
-    width: '30%',
-    height: 50,
-    alignSelf: 'center',
-    backgroundColor: '#503399',
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textSave: {
-    fontSize: 20,
-    color: '#FFFFFF',
+  createButtonText: {
+    fontSize: 18, // Adjust as needed
+    color: '#fff', // Adjust as needed
   },
 });
 

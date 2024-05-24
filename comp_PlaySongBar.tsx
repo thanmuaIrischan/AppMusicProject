@@ -1,14 +1,10 @@
+// Trong file PlaySongBar.tsx
+
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {useNavigation} from '@react-navigation/native';
-//
-import {
-  AddNewPlaylistNavigationProp,
-  ShowLyricsSongNavigationProp,
-} from './types';
 
-//
 const PlaySongBar = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -27,8 +23,11 @@ const PlaySongBar = () => {
     const secs = Math.floor(seconds % 60); // Làm tròn số giây
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
-  const navigation = useNavigation<ShowLyricsSongNavigationProp>();
-  const navigationNewPlaylist = useNavigation<AddNewPlaylistNavigationProp>();
+
+  const navigation = useNavigation();
+  const handleAddPlaylist = () => {
+    navigation.navigate('AddNewPlaylist', {accessToken, userId});
+  };
   return (
     <View style={styles.PlaySongBarContainer}>
       {/* PlaySongBar : song name and like button */}
@@ -59,9 +58,7 @@ const PlaySongBar = () => {
           <Text style={styles.DurationText}>{formatTime(duration)}</Text>
         </View>
         <View style={styles.layoutPlaySongButton}>
-          <TouchableOpacity
-            style={styles.leftButton}
-            onPress={() => navigation.navigate('ShowLyricsSong')}>
+          <TouchableOpacity style={styles.leftButton}>
             <Image
               style={styles.Button}
               source={require('./assets/LyricsSong.png')}
@@ -93,7 +90,7 @@ const PlaySongBar = () => {
           </View>
           <TouchableOpacity
             style={styles.rightButton}
-            onPress={() => navigationNewPlaylist.navigate('AddNewPlaylist')}>
+            onPress={handleAddPlaylist}>
             <Image
               style={styles.Button}
               source={require('./assets/AddPlaylist.png')}

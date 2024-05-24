@@ -1,3 +1,4 @@
+import React, {useEffect, useState, useRef} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -6,126 +7,140 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Song, {SongInfo} from './comp_Song'; // Import Song component and SongInfo type
-import React, {useState, useRef} from 'react';
-// import component SwitchMain
+import Song, {SongInfo} from './comp_Song';
 import SwitchMain from './comp_SwitchMainBar';
-
 import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
-//
 import HeaderBar from './comp_HeaderBar';
-//
+import {useRoute} from '@react-navigation/native'; // Import useRoute
+
+// Spotify API functions
+const SpotifyTokenContext = React.createContext(null);
+const getUserID = async (accessToken: string) => {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch user ID:', response.status);
+      return '';
+    }
+
+    const data = await response.json();
+    return data.id;
+  } catch (error) {
+    console.error('Error fetching user ID:', error.message);
+    return '';
+  }
+};
+
+const getAllUserPlaylists = async (
+  userId: string,
+  accessToken: string,
+): Promise<PlaylistInfo[]> => {
+  try {
+    const response = await fetch(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      console.error('Failed to fetch playlists:', response.status);
+      return [];
+    }
+
+    const data = await response.json();
+    return data.items.map((playlist: any) => ({
+      id: playlist.id,
+      name: playlist.name,
+      //description: playlist.description,
+    }));
+  } catch (error) {
+    console.error('Error fetching playlists:', error.message);
+    return [];
+  }
+};
+
 function MainMyPlaylist() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
-
-  // Danh sách các bài hát
-  const playlists: PlaylistInfo[] = [
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-    {
-      namePlaylist: 'Playlist 1',
-      Description: 'Description 1',
-      DateReleased: 'DateReleased 1',
-      navigation: null,
-      listSongs: null,
-    },
-  ];
+  const [playlists, setPlaylists] = useState<PlaylistInfo[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const route = useRoute();
+  const {token} = route.params; // Retrieve the access token from route params
 
   const handleScroll = (event: any) => {
-    // Specify the type of 'event' parameter
     const offsetY = event.nativeEvent.contentOffset.y;
-    const isScrollingUp = offsetY > scrollOffset.current; // Check if scrolling up
-    scrollOffset.current = offsetY; // Update scroll offset
+    const isScrollingUp = offsetY > scrollOffset.current;
+    scrollOffset.current = offsetY;
 
     if (isScrollingUp) {
-      setHideComponents(true); // Hide components when scrolling up
+      setHideComponents(true);
     } else {
-      setHideComponents(false); // Show components when scrolling down
+      setHideComponents(false);
     }
   };
 
-  // Render hidden components only if hideComponents is false
-  {
-    !hideComponents && (
-      <>
-        <SwitchMain />
-        <View style={styles.SeeAllNewSongContainer}>
-          <TouchableOpacity>
-            <Text style={styles.seeAllText}>See All</Text>
-          </TouchableOpacity>
-        </View>
-      </>
-    );
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) return;
+      const userId = await getUserID(token);
+      if (userId) {
+        const fetchedPlaylists = await getAllUserPlaylists(userId, token);
+        setPlaylists(fetchedPlaylists);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [token]);
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* Header */}
         <HeaderBar />
 
-        {/* SwitchMainContainer */}
-        <SwitchMain />
-        {/* SeeAllNewSongContainer */}
+        {!hideComponents && (
+          <>
+            <SwitchMain token={token} />
+
+            <View style={styles.SeeAllNewSongContainer}>
+              {/*
+              <TouchableOpacity>
+                <Text style={styles.seeAllText}>See All</Text>
+              </TouchableOpacity>
+              */}
+            </View>
+          </>
+        )}
+
         <View style={styles.SeeAllNewSongContainer}>
           <Text style={styles.seeAllText}>My Playlists</Text>
         </View>
 
-        {/* ScrollView */}
         <ScrollView
           contentContainerStyle={styles.scrollContainerNewSong}
           onScroll={handleScroll}
           scrollEventThrottle={16}>
-          {/* List of songs */}
           {playlists.map((playlist, index) => (
-            <Playlist key={index} playlistInfo={playlist} />
+            <Playlist key={index} playlistInfo={playlist} token={token} />
           ))}
         </ScrollView>
         <PlaySongBar />
@@ -169,8 +184,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginBottom: 15,
   },
-
-  // comp_playsongbar.tsx
   PlaySongBarContainer: {
     width: '100%',
     height: hp('17%'),
