@@ -30,7 +30,8 @@ type MainSocialProps = {
 
 const MainSocial: React.FC<MainSocialProps> = ({navigation, route}) => {
   // You can now access the token from the route params
-  const token = route.params?.token;
+  // fix lại
+  const token = route.params?.token || '';
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
 
@@ -87,7 +88,7 @@ const MainSocial: React.FC<MainSocialProps> = ({navigation, route}) => {
             <Song key={index} songInfo={song} />
           ))}
         </ScrollView>
-        <PlaySongBar />
+        <PlaySongBar token={token} />
       </View>
     </SafeAreaView>
   );

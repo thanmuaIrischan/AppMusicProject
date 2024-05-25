@@ -1,15 +1,15 @@
-// Trong file PlaySongBar.tsx
-
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {useNavigation} from '@react-navigation/native';
 
-const PlaySongBar = () => {
+import {AddNewPlaylistNavigationProp} from './types';
+
+const PlaySongBar = ({token}: {token: string}) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(200); // giả sử thời gian bài hát là 200 giây
-
+  const navigation = useNavigation<AddNewPlaylistNavigationProp>();
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
@@ -23,22 +23,15 @@ const PlaySongBar = () => {
     const secs = Math.floor(seconds % 60); // Làm tròn số giây
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
-
-  const navigation = useNavigation();
   const handleAddPlaylist = () => {
-    navigation.navigate('AddNewPlaylist', {accessToken, userId});
+    navigation.navigate('AddNewPlaylist', {token});
   };
+
   return (
     <View style={styles.PlaySongBarContainer}>
       {/* PlaySongBar : song name and like button */}
       <View style={styles.SongNameContainer}>
         <Text style={styles.SongNameText}>Song Name</Text>
-        <TouchableOpacity>
-          <Image
-            style={styles.LikeButton}
-            source={require('./assets/LikeButton.png')}
-          />
-        </TouchableOpacity>
       </View>
 
       {/* chức năng phát nhạc */}
@@ -58,12 +51,6 @@ const PlaySongBar = () => {
           <Text style={styles.DurationText}>{formatTime(duration)}</Text>
         </View>
         <View style={styles.layoutPlaySongButton}>
-          <TouchableOpacity style={styles.leftButton}>
-            <Image
-              style={styles.Button}
-              source={require('./assets/LyricsSong.png')}
-            />
-          </TouchableOpacity>
           <View style={styles.centerContainer}>
             <TouchableOpacity>
               <Image

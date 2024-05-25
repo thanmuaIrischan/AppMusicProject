@@ -6,7 +6,7 @@ export type RootStackParamList = {
   MainMyPlaylist: {token: string} | undefined;
   ShowLyricsSong: undefined;
   Search: undefined;
-  AddNewPlaylist: undefined;
+  AddNewPlaylist: {token: string} | undefined;
   ShowPlaylist: {playlistId: string; token: string} | undefined;
 };
 

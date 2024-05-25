@@ -40,6 +40,7 @@ const AddNewPlaylist: React.FC<AddNewPlaylistProps> = ({route}) => {
 
         {/* Playlist Form */}
         <View style={styles.formContainer}>
+          <Text style={styles.content}>Add New Playlist</Text>
           <Text style={styles.label}>Playlist Name</Text>
           <TextInput
             style={styles.input}
@@ -67,53 +68,59 @@ const AddNewPlaylist: React.FC<AddNewPlaylistProps> = ({route}) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff', // Adjust as needed
+    backgroundColor: '#0A0022', //
+  },
+  content: {
+    color: 'white', //
+    fontSize: 20,
+    padding: 40,
+    textAlign: 'center',
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff', // Adjust as needed
+    backgroundColor: '#0A0022', //
   },
   header: {
     width: '100%',
-    height: 50, // Adjust as needed
-    justifyContent: 'center',
+    height: 50, //
     alignItems: 'flex-start',
   },
   returnIcon: {
-    width: 50, // Adjust as needed
-    height: 50, // Adjust as needed
-    marginLeft: 10, // Adjust as needed
+    width: 50, //
+    height: 50, //
+    marginLeft: 10,
+    marginTop: 15,
   },
   formContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20, // Adjust as needed
+
+    padding: 20,
   },
   label: {
-    fontSize: 18, // Adjust as needed
-    marginBottom: 10, // Adjust as needed
+    fontSize: 18, //
+    marginBottom: 10,
+    color: 'white', //
   },
   input: {
     width: '100%',
-    height: 40, // Adjust as needed
+    height: 40, //
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
-    marginBottom: 20, // Adjust as needed
-    paddingHorizontal: 10, // Adjust as needed
+    marginBottom: 20, //
+    paddingHorizontal: 10, //
   },
   createButton: {
     width: '100%',
-    height: 40, // Adjust as needed
-    backgroundColor: 'blue', // Adjust as needed
+    height: 40, //
+    backgroundColor: 'blue', //
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 5,
   },
   createButtonText: {
-    fontSize: 18, // Adjust as needed
-    color: '#fff', // Adjust as needed
+    fontSize: 18, //
+    color: '#fff', //
   },
 });
 

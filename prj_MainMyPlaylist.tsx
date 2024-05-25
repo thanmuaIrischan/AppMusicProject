@@ -143,7 +143,7 @@ function MainMyPlaylist() {
             <Playlist key={index} playlistInfo={playlist} token={token} />
           ))}
         </ScrollView>
-        <PlaySongBar />
+        <PlaySongBar token={token} />
       </View>
     </SafeAreaView>
   );
