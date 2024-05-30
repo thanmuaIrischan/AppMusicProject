@@ -8,6 +8,7 @@ import UserPlaylists from './TestLoadPlaylist';
 import MainMyPlaylist from './prj_MainMyPlaylist';
 import ShowPlaylist from './prj_ShowPlaylist';
 import AddNewPlaylist from './prj_AddNewPlaylist';
+import Search from './prj_Search';
 const Stack = createStackNavigator();
 
 const Navigator = () => {
@@ -23,6 +24,7 @@ const Navigator = () => {
         <Stack.Screen name="MainMyPlaylist" component={MainMyPlaylist} />
         <Stack.Screen name="ShowPlaylist" component={ShowPlaylist} />
         <Stack.Screen name="AddNewPlaylist" component={AddNewPlaylist} />
+        <Stack.Screen name="Search" component={Search} />
       </Stack.Navigator>
     </NavigationContainer>
   );

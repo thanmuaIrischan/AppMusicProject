@@ -16,6 +16,7 @@ import {
 import Song from './comp_Song';
 import PlaySongBar from './comp_PlaySongBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import {getTokenFromGlobal} from './TokenService';
 
 // Function to get playlist details
 const getPlaylistDetails = async (playlistId, accessToken) => {
@@ -63,8 +64,8 @@ function ShowPlaylist() {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const {playlistId, token} = route.params; // Retrieve the playlist ID and access token from route params
-
+  const {playlistId} = route.params; // Retrieve the playlist ID from route params
+  const token = getTokenFromGlobal();
   const handleScroll = event => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const isScrollingUp = offsetY > scrollOffset.current;
@@ -136,7 +137,7 @@ function ShowPlaylist() {
           ))}
         </ScrollView>
         {/* PlaySongBar */}
-        <PlaySongBar />
+        <PlaySongBar routeToken={token} />
       </View>
     </SafeAreaView>
   );

@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   SafeAreaView,
   ScrollView,
@@ -14,8 +15,7 @@ import {
 import Song, {SongInfo} from './comp_Song'; // Import Song component and SongInfo type
 import React, {useState, useRef} from 'react';
 // import component SwitchMain
-import SwitchMain from './comp_SwitchMainBar';
-
+import {useRoute, useIsFocused, useFocusEffect} from '@react-navigation/native';
 import PlaySongBar from './comp_PlaySongBar';
 //
 import {useNavigation} from '@react-navigation/native';
@@ -25,20 +25,58 @@ import {TextInput} from 'react-native-gesture-handler';
 function Search() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
+  // for hàm search
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SongInfo[]>([]);
+  const [loading, setLoading] = useState(false);
+  //
   const navigation = useNavigation();
-
+  const route = useRoute();
+  const {token} = route.params;
   // Danh sách các bài hát
 
-  const handleScroll = (event: any) => {
-    // Specify the type of 'event' parameter
+  const handleScroll = event => {
     const offsetY = event.nativeEvent.contentOffset.y;
-    const isScrollingUp = offsetY > scrollOffset.current; // Check if scrolling up
-    scrollOffset.current = offsetY; // Update scroll offset
+    const isScrollingUp = offsetY > scrollOffset.current;
+    scrollOffset.current = offsetY;
 
-    if (isScrollingUp) {
-      setHideComponents(true); // Hide components when scrolling up
-    } else {
-      setHideComponents(false); // Show components when scrolling down
+    setHideComponents(isScrollingUp);
+  };
+
+  // hàm search song
+
+  const searchSongs = async () => {
+    if (!searchQuery) return;
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://api.spotify.com/v1/search?q=${encodeURIComponent(
+          searchQuery,
+        )}&type=track`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        console.error('Failed to search songs:', response.status);
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      const songs = data.tracks.items.map(item => ({
+        name: item.name,
+        artists: item.artists,
+        album: item.album,
+      }));
+      setSearchResults(songs);
+    } catch (error) {
+      console.error('Error searching songs:', error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,12 +93,14 @@ function Search() {
           </TouchableOpacity>
         </View>
 
-        {/* SwitchMainContainer */}
-
-        {/* SeeAllNewSongContainer */}
+        {/* Search Container */}
         <View style={styles.SearchContainer}>
-          <TextInput style={styles.textInput}></TextInput>
-          <TouchableOpacity>
+          <TextInput
+            style={styles.textInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <TouchableOpacity onPress={searchSongs}>
             <Image
               style={styles.searchIcon}
               source={require('./assets/Search.png')}
@@ -73,9 +113,16 @@ function Search() {
           contentContainerStyle={styles.scrollContainerNewSong}
           onScroll={handleScroll}
           scrollEventThrottle={16}>
-          {/* List of songs search by user */}
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            searchResults.map((song, index) => (
+              <Song key={index} songInfo={song} />
+            ))
+          )}
         </ScrollView>
-        <PlaySongBar />
+
+        <PlaySongBar routeToken={token} />
       </View>
     </SafeAreaView>
   );

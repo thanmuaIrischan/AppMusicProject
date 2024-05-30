@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   Image,
   SafeAreaView,
@@ -18,10 +18,13 @@ import SwitchMain from './comp_SwitchMainBar';
 import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
 import HeaderBar from './comp_HeaderBar';
-import {useRoute} from '@react-navigation/native'; // Import useRoute
+import {useRoute, useIsFocused, useFocusEffect} from '@react-navigation/native'; // Import useRoute and useIsFocused
+import {saveTokenToGlobal} from './TokenService';
+import AddNewPlaylist from './prj_AddNewPlaylist';
+import {saveUserIdToGlobal} from './TokenService';
 
 // Spotify API functions
-const SpotifyTokenContext = React.createContext(null);
+
 const getUserID = async (accessToken: string) => {
   try {
     const response = await fetch('https://api.spotify.com/v1/me', {
@@ -80,7 +83,12 @@ function MainMyPlaylist() {
   const [playlists, setPlaylists] = useState<PlaylistInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const route = useRoute();
-  const {token} = route.params; // Retrieve the access token from route params
+  const {token} = route.params; /// Retrieve the access token from route params
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    saveTokenToGlobal(token);
+  }, [token]);
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -94,28 +102,36 @@ function MainMyPlaylist() {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!token) return;
-      const userId = await getUserID(token);
-      if (userId) {
-        const fetchedPlaylists = await getAllUserPlaylists(userId, token);
-        setPlaylists(fetchedPlaylists);
-      }
-      setLoading(false);
-    };
+  const fetchData = async () => {
+    if (!token) return;
+    const userId = await getUserID(token);
+    if (userId) {
+      saveUserIdToGlobal(userId);
+      const fetchedPlaylists = await getAllUserPlaylists(userId, token);
+      setPlaylists(fetchedPlaylists);
+    }
+    setLoading(false);
+  };
 
+  // hàm gọi lại api spotify lấy list playlist
+  useEffect(() => {
     fetchData();
   }, [token]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, []),
+  );
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
-
+  //
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <HeaderBar />
+        <HeaderBar routeToken={token} />
 
         {!hideComponents && (
           <>
@@ -143,7 +159,7 @@ function MainMyPlaylist() {
             <Playlist key={index} playlistInfo={playlist} token={token} />
           ))}
         </ScrollView>
-        <PlaySongBar token={token} />
+        <PlaySongBar routeToken={token} />
       </View>
     </SafeAreaView>
   );

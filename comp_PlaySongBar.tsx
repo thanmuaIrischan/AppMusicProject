@@ -1,15 +1,34 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {AddNewPlaylistNavigationProp} from './types';
 
-const PlaySongBar = ({token}: {token: string}) => {
+const PlaySongBar = ({routeToken}) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(200); // giả sử thời gian bài hát là 200 giây
+  const [duration, setDuration] = useState<number>(200);
   const navigation = useNavigation<AddNewPlaylistNavigationProp>();
+  const [storedToken, setStoredToken] = useState('');
+
+  useEffect(() => {
+    setStoredToken(routeToken);
+  }, [routeToken]);
+
+  useEffect(() => {
+    // Lấy token từ AsyncStorage khi component được render
+    const getToken = async () => {
+      const storedToken = await AsyncStorage.getItem('token');
+      if (storedToken) {
+        setStoredToken(storedToken);
+      }
+    };
+
+    getToken();
+  }, []);
+
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
@@ -20,21 +39,24 @@ const PlaySongBar = ({token}: {token: string}) => {
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60); // Làm tròn số giây
+    const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
+
   const handleAddPlaylist = () => {
-    navigation.navigate('AddNewPlaylist', {token});
+    if (storedToken || routeToken) {
+      navigation.navigate('AddNewPlaylist', {token: storedToken || routeToken});
+    } else {
+      console.warn('Token is missing. Please make sure it is available.');
+    }
   };
 
   return (
     <View style={styles.PlaySongBarContainer}>
-      {/* PlaySongBar : song name and like button */}
       <View style={styles.SongNameContainer}>
         <Text style={styles.SongNameText}>Song Name</Text>
       </View>
 
-      {/* chức năng phát nhạc */}
       <View style={styles.MusicControlsContainer}>
         <View style={styles.layoutSliderSong}>
           <Text style={styles.CurrentTimeText}>{formatTime(currentTime)}</Text>
