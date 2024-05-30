@@ -17,6 +17,7 @@ import Song from './comp_Song';
 import PlaySongBar from './comp_PlaySongBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 
+
 // Function to get playlist details
 const getPlaylistDetails = async (playlistId, accessToken) => {
   try {
@@ -38,6 +39,7 @@ const getPlaylistDetails = async (playlistId, accessToken) => {
     const images = data.images ? data.images.map(image => image.url) : [];
     const tracks = data.tracks
       ? data.tracks.items.map(item => ({
+          id: item.track.id,
           name: item.track.name,
           artistName: item.track.artists.map(artist => artist.name).join(', '),
         }))
@@ -135,9 +137,8 @@ function ShowPlaylist() {
             <Song key={index} songInfo={song} />
           ))}
         </ScrollView>
-        {/* PlaySongBar */}
-        <PlaySongBar />
       </View>
+      <PlaySongBar token={token}/>
     </SafeAreaView>
   );
 }

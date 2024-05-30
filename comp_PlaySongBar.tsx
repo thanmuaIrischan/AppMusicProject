@@ -1,17 +1,107 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import TrackPlayer, { Capability, State, usePlaybackState, useProgress } from 'react-native-track-player';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from './store';
+import { setCurrentTrackId, setTrackQueue, setCurrentPosition, setTimer } from './globalSlice';
 
-import {AddNewPlaylistNavigationProp} from './types';
-
-const PlaySongBar = ({token}: {token: string}) => {
+const PlaySongBar = ({ token }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(200); // giả sử thời gian bài hát là 200 giây
-  const navigation = useNavigation<AddNewPlaylistNavigationProp>();
-  const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  const [title, setTitle] = useState<string>('');
+  const playbackState = usePlaybackState();
+  const progress = useProgress();
+  const navigation = useNavigation();
+  const currentTrackId = useSelector((state: RootState) => state.global.currentTrackId);
+  const trackQueue = useSelector((state: RootState) => state.global.trackQueue);
+  const currentPosition = useSelector((state: RootState) => state.global.currentPosition);
+  const timer = useSelector((state: RootState) => state.global.timer);
+  const dispatch = useDispatch();
+
+  const handlePlayPause = useCallback(async () => {
+    const currentState = await TrackPlayer.getState();
+    console.log('Current playback state:', currentState);
+    if (currentState === State.Playing) {
+      await TrackPlayer.pause();
+      setIsPlaying(false);
+      console.log('Track paused');
+    } else {
+      await TrackPlayer.play();
+      setIsPlaying(true);
+      console.log('Track playing');
+    }
+  }, []);
+
+  const addTrackQueue = useCallback((newId) => {
+    const newQueue = [...trackQueue.slice(0, currentPosition + 1), newId];
+    dispatch(setTrackQueue(newQueue));
+    dispatch(setCurrentPosition(currentPosition + 1));
+  }, [dispatch, trackQueue, currentPosition]);
+
+  const handlePlayNew = useCallback(async () => {
+    try {
+      await TrackPlayer.reset();
+      await addSpotifyTrack(currentTrackId, token);
+      await TrackPlayer.play();
+    } catch (error) {
+      console.error('Error playing track:', error);
+    }
+  }, [currentTrackId, token]);
+
+  const handlePrevTrack = useCallback(async () => {
+    if (currentPosition > 0) {
+      dispatch(setCurrentTrackId(trackQueue[currentPosition - 1]));
+      dispatch(setCurrentPosition(currentPosition - 1));
+      dispatch(setCurrentTrackId(trackQueue[currentPosition - 1]));
+      addSpotifyTrack(currentTrackId, token);
+    }
+  }, [dispatch, trackQueue, currentPosition, token, currentTrackId]);
+
+  const handleNextTrack = useCallback(async () => {
+    if (currentPosition < trackQueue.length - 1) {
+      dispatch(setCurrentTrackId(trackQueue[currentPosition + 1]));
+      dispatch(setCurrentPosition(currentPosition + 1));
+      dispatch(setCurrentTrackId(trackQueue[currentPosition + 1]));
+      addSpotifyTrack(currentTrackId, token);
+    }
+  }, [dispatch, trackQueue, currentPosition, token, currentTrackId]);
+
+  const addSpotifyTrack = async (trackId, accessToken) => {
+    const trackInfo = await fetchTrackUrl(trackId, accessToken);
+    const trackUrl = trackInfo.preview_url;
+    setTitle(trackInfo.name);
+
+    if (trackUrl) {
+      await TrackPlayer.add({
+        id: trackId,
+        url: trackUrl,
+        title: trackInfo.name,
+      });
+    } else {
+      console.error('Track preview URL not available');
+    }
+  };
+
+  const fetchTrackUrl = async (trackId, accessToken) => {
+    const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch track URL');
+      return '';
+    }
+
+    const data = await response.json();
+    return {
+      preview_url: data.preview_url || '',
+      name: data.name,
+    };
   };
 
   const handleSliderChange = (value: number) => {
@@ -20,24 +110,67 @@ const PlaySongBar = ({token}: {token: string}) => {
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60); // Làm tròn số giây
+    const secs = Math.floor(seconds % 60);
+    if (seconds !== 29) {
+      dispatch(setTimer(seconds));
+    }
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
+
   const handleAddPlaylist = () => {
-    navigation.navigate('AddNewPlaylist', {token});
+    navigation.navigate('AddNewPlaylist', { token });
   };
+
+  useEffect(() => {
+    const setupPlayer = async () => {
+      await TrackPlayer.setupPlayer();
+      TrackPlayer.updateOptions({
+        stopWithApp: true,
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+        compactCapabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+        ],
+      });
+    };
+
+    setupPlayer();
+
+    return () => {
+      TrackPlayer.reset();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (currentTrackId) {
+      (async () => {
+        await TrackPlayer.reset();
+        await addSpotifyTrack(currentTrackId, token);
+        await TrackPlayer.play();
+        if(!trackQueue.includes(currentTrackId)){
+          addTrackQueue(currentTrackId);
+        }
+      })();
+    }
+  }, [currentTrackId, token]);
 
   return (
     <View style={styles.PlaySongBarContainer}>
-      {/* PlaySongBar : song name and like button */}
       <View style={styles.SongNameContainer}>
-        <Text style={styles.SongNameText}>Song Name</Text>
+        <Text style={styles.SongNameText}>{title}</Text>
       </View>
 
-      {/* chức năng phát nhạc */}
       <View style={styles.MusicControlsContainer}>
         <View style={styles.layoutSliderSong}>
-          <Text style={styles.CurrentTimeText}>{formatTime(currentTime)}</Text>
+          <Text style={styles.CurrentTimeText}></Text>
           <Slider
             style={styles.Slider}
             minimumValue={0}
@@ -48,17 +181,17 @@ const PlaySongBar = ({token}: {token: string}) => {
             maximumTrackTintColor="#8E8E93"
             thumbTintColor="#1EB1FC"
           />
-          <Text style={styles.DurationText}>{formatTime(duration)}</Text>
+          <Text style={styles.DurationText}></Text>
         </View>
         <View style={styles.layoutPlaySongButton}>
           <View style={styles.centerContainer}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handlePrevTrack}>
               <Image
                 style={styles.Button}
                 source={require('./assets/PreviousButton.png')}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={togglePlayPause}>
+            <TouchableOpacity onPress={handlePlayPause}>
               <Image
                 style={styles.Button}
                 source={
@@ -68,7 +201,7 @@ const PlaySongBar = ({token}: {token: string}) => {
                 }
               />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleNextTrack}>
               <Image
                 style={styles.Button}
                 source={require('./assets/NextButton.png')}
@@ -163,5 +296,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+TrackPlayer.registerPlaybackService(() => require('./service'));
 
 export default PlaySongBar;

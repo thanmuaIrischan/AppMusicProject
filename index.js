@@ -16,7 +16,7 @@ AppRegistry.registerComponent(appName, () => App);
 import AppNavigator from './prj_AppNavigator';
 import ShowLyricsSong from './prj_ShowLyricsSong';
 
-AppRegistry.registerComponent(appName, () => AppNavigator);
+//AppRegistry.registerComponent(appName, () => AppNavigator);
 import Navigator from './Navigator'
 AppRegistry.registerComponent(appName, () => Navigator);
 

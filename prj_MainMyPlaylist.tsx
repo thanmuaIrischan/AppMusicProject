@@ -19,6 +19,8 @@ import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
 import HeaderBar from './comp_HeaderBar';
 import {useRoute} from '@react-navigation/native'; // Import useRoute
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
 
 // Spotify API functions
 const SpotifyTokenContext = React.createContext(null);
@@ -81,6 +83,7 @@ function MainMyPlaylist() {
   const [loading, setLoading] = useState<boolean>(true);
   const route = useRoute();
   const {token} = route.params; // Retrieve the access token from route params
+  const currentTrackId = useSelector((state: RootState) => state.global.currentTrackId);
 
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
@@ -143,7 +146,7 @@ function MainMyPlaylist() {
             <Playlist key={index} playlistInfo={playlist} token={token} />
           ))}
         </ScrollView>
-        <PlaySongBar token={token} />
+        <PlaySongBar token={token} id={currentTrackId} />
       </View>
     </SafeAreaView>
   );

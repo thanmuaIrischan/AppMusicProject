@@ -8,10 +8,15 @@ import UserPlaylists from './TestLoadPlaylist';
 import MainMyPlaylist from './prj_MainMyPlaylist';
 import ShowPlaylist from './prj_ShowPlaylist';
 import AddNewPlaylist from './prj_AddNewPlaylist';
+import PlaySongBar from './comp_PlaySongBar';
+import Search from './prj_Search';
+import { Provider } from 'react-redux';
+import store from './store';
 const Stack = createStackNavigator();
 
 const Navigator = () => {
   return (
+  <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Login"
@@ -23,8 +28,10 @@ const Navigator = () => {
         <Stack.Screen name="MainMyPlaylist" component={MainMyPlaylist} />
         <Stack.Screen name="ShowPlaylist" component={ShowPlaylist} />
         <Stack.Screen name="AddNewPlaylist" component={AddNewPlaylist} />
+        <Stack.Screen name="Search" component={Search} />
       </Stack.Navigator>
     </NavigationContainer>
+  </Provider>
   );
 };
 

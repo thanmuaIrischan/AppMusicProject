@@ -7,12 +7,15 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {authorize} from 'react-native-app-auth';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { Provider } from 'react-redux';
+import store from './store';
+
 const Login = () => {
   const [token, setToken] = useState('');
   const navigation = useNavigation();
@@ -56,6 +59,7 @@ const Login = () => {
     </View>*/
   }
   return (
+  <Provider store={store}>
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Header */}
@@ -81,6 +85,7 @@ const Login = () => {
         </View>
       </View>
     </SafeAreaView>
+  </Provider>
   );
 };
 

@@ -75,7 +75,7 @@ function Search() {
           scrollEventThrottle={16}>
           {/* List of songs search by user */}
         </ScrollView>
-        <PlaySongBar />
+        {/*<PlaySongBar />*/}
       </View>
     </SafeAreaView>
   );
