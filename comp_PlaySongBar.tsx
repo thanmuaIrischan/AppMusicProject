@@ -66,30 +66,30 @@ const PlaySongBar = ({routeToken}) => {
   const handlePlayNew = useCallback(async () => {
     try {
       await TrackPlayer.reset();
-      await addSpotifyTrack(currentTrackId, token);
+      await addSpotifyTrack(currentTrackId, routeToken);
       await TrackPlayer.play();
     } catch (error) {
       console.error('Error playing track:', error);
     }
-  }, [currentTrackId, token]);
+  }, [currentTrackId, routeToken]);
 
   const handlePrevTrack = useCallback(async () => {
     if (currentPosition > 0) {
       dispatch(setCurrentTrackId(trackQueue[currentPosition - 1]));
       dispatch(setCurrentPosition(currentPosition - 1));
       dispatch(setCurrentTrackId(trackQueue[currentPosition - 1]));
-      addSpotifyTrack(currentTrackId, token);
+      addSpotifyTrack(currentTrackId, routeToken);
     }
-  }, [dispatch, trackQueue, currentPosition, token, currentTrackId]);
+  }, [dispatch, trackQueue, currentPosition, routeToken, currentTrackId]);
 
   const handleNextTrack = useCallback(async () => {
     if (currentPosition < trackQueue.length - 1) {
       dispatch(setCurrentTrackId(trackQueue[currentPosition + 1]));
       dispatch(setCurrentPosition(currentPosition + 1));
       dispatch(setCurrentTrackId(trackQueue[currentPosition + 1]));
-      addSpotifyTrack(currentTrackId, token);
+      addSpotifyTrack(currentTrackId, routeToken);
     }
-  }, [dispatch, trackQueue, currentPosition, token, currentTrackId]);
+  }, [dispatch, trackQueue, currentPosition, routeToken, currentTrackId]);
 
   const addSpotifyTrack = async (trackId, accessToken) => {
     const trackInfo = await fetchTrackUrl(trackId, accessToken);
@@ -176,14 +176,14 @@ const PlaySongBar = ({routeToken}) => {
     if (currentTrackId) {
       (async () => {
         await TrackPlayer.reset();
-        await addSpotifyTrack(currentTrackId, token);
+        await addSpotifyTrack(currentTrackId, routeToken);
         await TrackPlayer.play();
         if(!trackQueue.includes(currentTrackId)){
           addTrackQueue(currentTrackId);
         }
       })();
     }
-  }, [currentTrackId, token]);
+  }, [currentTrackId, routeToken]);
 
   return (
     <View style={styles.PlaySongBarContainer}>

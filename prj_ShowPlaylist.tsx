@@ -138,7 +138,6 @@ function ShowPlaylist() {
             <Song key={index} songInfo={song} />
           ))}
         </ScrollView>
-        <PlaySongBar routeToken={token} />
       </View>
       <PlaySongBar token={token}/>
     </SafeAreaView>
