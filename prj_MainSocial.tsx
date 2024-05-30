@@ -88,7 +88,7 @@ const MainSocial: React.FC<MainSocialProps> = ({navigation, route}) => {
             <Song key={index} songInfo={song} />
           ))}
         </ScrollView>
-        <PlaySongBar token={token} />
+        <PlaySongBar routeToken={token} />
       </View>
     </SafeAreaView>
   );

@@ -65,7 +65,7 @@ function ShowLyricsSong() {
           {/* lyrics */}
           <Text style={styles.lyricsText}></Text>
         </ScrollView>
-        <PlaySongBar />
+        <PlaySongBar token={token} />
       </View>
     </SafeAreaView>
   );

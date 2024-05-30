@@ -3,23 +3,45 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { useNavigation } from '@react-navigation/native';
 import TrackPlayer, { Capability, State, usePlaybackState, useProgress } from 'react-native-track-player';
+
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
 import { setCurrentTrackId, setTrackQueue, setCurrentPosition, setTimer } from './globalSlice';
 
-const PlaySongBar = ({ token }) => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import {AddNewPlaylistNavigationProp} from './types';
+
+const PlaySongBar = ({routeToken}) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(200); // giả sử thời gian bài hát là 200 giây
+  const [duration, setDuration] = useState<number>(200);
   const [title, setTitle] = useState<string>('');
   const playbackState = usePlaybackState();
   const progress = useProgress();
-  const navigation = useNavigation();
+  const navigation = useNavigation<AddNewPlaylistNavigationProp>();
   const currentTrackId = useSelector((state: RootState) => state.global.currentTrackId);
   const trackQueue = useSelector((state: RootState) => state.global.trackQueue);
   const currentPosition = useSelector((state: RootState) => state.global.currentPosition);
   const timer = useSelector((state: RootState) => state.global.timer);
   const dispatch = useDispatch();
+  const [storedToken, setStoredToken] = useState('');
+
+  useEffect(() => {
+    setStoredToken(routeToken);
+  }, [routeToken]);
+
+  useEffect(() => {
+    // Lấy token từ AsyncStorage khi component được render
+    const getToken = async () => {
+      const storedToken = await AsyncStorage.getItem('token');
+      if (storedToken) {
+        setStoredToken(storedToken);
+      }
+    };
+
+    getToken();
+  }, []);
 
   const handlePlayPause = useCallback(async () => {
     const currentState = await TrackPlayer.getState();
@@ -111,14 +133,15 @@ const PlaySongBar = ({ token }) => {
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    if (seconds !== 29) {
-      dispatch(setTimer(seconds));
-    }
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   const handleAddPlaylist = () => {
-    navigation.navigate('AddNewPlaylist', { token });
+    if (storedToken || routeToken) {
+      navigation.navigate('AddNewPlaylist', {token: storedToken || routeToken});
+    } else {
+      console.warn('Token is missing. Please make sure it is available.');
+    }
   };
 
   useEffect(() => {

@@ -6,11 +6,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-const HeaderBar = () => {
-  const navigation = useNavigation<SearchNavigationProp>(); // Sử dụng navigation của màn hình Search
+const HeaderBar = ({routeToken}) => {
+  // Nhận routeToken từ props
+  const navigation = useNavigation<SearchNavigationProp>();
 
   const handleSearchPress = () => {
-    navigation.navigate('Search'); // Chuyển sang màn hình Search khi nhấn nút Search
+    navigation.navigate('Search', {token: routeToken}); // Truyền token khi điều hướng đến Search
   };
 
   return (

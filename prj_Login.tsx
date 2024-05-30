@@ -34,6 +34,7 @@ const Login = () => {
       'user-read-playback-state',
       'user-modify-playback-state',
       'streaming',
+      'playlist-modify-private', // playlist
     ],
   };
 
