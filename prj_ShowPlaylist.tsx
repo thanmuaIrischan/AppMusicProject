@@ -134,7 +134,7 @@ function ShowPlaylist() {
           scrollEventThrottle={16}>
           {/* List of songs */}
           {playlistDetails.tracks.map((song, index) => (
-            <Song key={index} songInfo={song} />
+            <Song key={index} songInfo={song} token={token} />
           ))}
         </ScrollView>
       </View>

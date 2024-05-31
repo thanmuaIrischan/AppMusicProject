@@ -18,8 +18,8 @@ import SwitchMain from './comp_SwitchMainBar';
 import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
 import HeaderBar from './comp_HeaderBar';
-import {useSelector} from 'react-redux';
-import {RootState} from './store';
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
 import {useRoute, useIsFocused, useFocusEffect} from '@react-navigation/native'; // Import useRoute and useIsFocused
 import {saveTokenToGlobal} from './TokenService';
 import AddNewPlaylist from './prj_AddNewPlaylist';
@@ -68,26 +68,27 @@ const getAllUserPlaylists = async (
     }
 
     const data = await response.json();
-    return data.items.map((playlist: any) => ({
-      id: playlist.id,
-      name: playlist.name,
-      //description: playlist.description,
-    }));
+    const ownedPlaylist = data.items
+      .filter((playlist: any) => (playlist.owner.id === userId))
+      .map((playlist: any) => ({
+        id: playlist.id,
+        name: playlist.name,
+        // description: playlist.description,
+      }));
+    return ownedPlaylist;
   } catch (error) {
     console.error('Error fetching playlists:', error.message);
     return [];
   }
 };
 
-function MainMyPlaylist() {
+function AddSongToPlaylist() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
   const [playlists, setPlaylists] = useState<PlaylistInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const route = useRoute();
-  const currentTrackId = useSelector(
-    (state: RootState) => state.global.currentTrackId,
-  );
+  const currentTrackId = useSelector((state: RootState) => state.global.currentTrackId);
   const {token} = route.params; /// Retrieve the access token from route params
   const isFocused = useIsFocused();
 
@@ -161,7 +162,7 @@ function MainMyPlaylist() {
           onScroll={handleScroll}
           scrollEventThrottle={16}>
           {playlists.map((playlist, index) => (
-            <Playlist key={index} playlistInfo={playlist} token={token} mode='view' />
+            <Playlist key={index} playlistInfo={playlist} token={token} mode={'add'}/>
           ))}
         </ScrollView>
         <PlaySongBar routeToken={token} />
@@ -228,4 +229,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainMyPlaylist;
+export default AddSongToPlaylist;
