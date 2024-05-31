@@ -26,6 +26,7 @@ const PlaySongBar = ({routeToken}) => {
   const timer = useSelector((state: RootState) => state.global.timer);
   const dispatch = useDispatch();
   const [storedToken, setStoredToken] = useState('');
+  const [isPlayable, setIsPlayable] = useState<boolean>(false);
 
   useEffect(() => {
     setStoredToken(routeToken);
@@ -93,17 +94,19 @@ const PlaySongBar = ({routeToken}) => {
 
   const addSpotifyTrack = async (trackId, accessToken) => {
     const trackInfo = await fetchTrackUrl(trackId, accessToken);
+
     const trackUrl = trackInfo.preview_url;
     setTitle(trackInfo.name);
 
-    if (trackUrl) {
+    if (trackUrl != '' || trackUrl != null) {
+      setIsPlayable(true);
       await TrackPlayer.add({
         id: trackId,
         url: trackUrl,
         title: trackInfo.name,
       });
     } else {
-      console.error('Track preview URL not available');
+      setIsPlayable(false);
     }
   };
 
@@ -114,12 +117,13 @@ const PlaySongBar = ({routeToken}) => {
       },
     });
 
-    if (!response.ok) {
-      console.error('Failed to fetch track URL');
-      return '';
-    }
-
     const data = await response.json();
+
+    if (data.preview_url === '' || data.preview_url === null) {
+          console.error('Failed to fetch track URL');
+          return '';
+        }
+
     return {
       preview_url: data.preview_url || '',
       name: data.name,
@@ -178,8 +182,10 @@ const PlaySongBar = ({routeToken}) => {
         await TrackPlayer.reset();
         await addSpotifyTrack(currentTrackId, routeToken);
         await TrackPlayer.play();
-        if(!trackQueue.includes(currentTrackId)){
-          addTrackQueue(currentTrackId);
+        if(isPlayable){
+          if(!trackQueue.includes(currentTrackId)){
+            addTrackQueue(currentTrackId);
+          }
         }
       })();
     }

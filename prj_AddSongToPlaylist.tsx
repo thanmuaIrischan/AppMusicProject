@@ -68,18 +68,21 @@ const getAllUserPlaylists = async (
     }
 
     const data = await response.json();
-    return data.items.map((playlist: any) => ({
-      id: playlist.id,
-      name: playlist.name,
-      //description: playlist.description,
-    }));
+    const ownedPlaylist = data.items
+      .filter((playlist: any) => (playlist.owner.id === userId))
+      .map((playlist: any) => ({
+        id: playlist.id,
+        name: playlist.name,
+        // description: playlist.description,
+      }));
+    return ownedPlaylist;
   } catch (error) {
     console.error('Error fetching playlists:', error.message);
     return [];
   }
 };
 
-function MainMyPlaylist() {
+function AddSongToPlaylist() {
   const [hideComponents, setHideComponents] = useState(false);
   const scrollOffset = useRef(0);
   const [playlists, setPlaylists] = useState<PlaylistInfo[]>([]);
@@ -159,7 +162,7 @@ function MainMyPlaylist() {
           onScroll={handleScroll}
           scrollEventThrottle={16}>
           {playlists.map((playlist, index) => (
-            <Playlist key={index} playlistInfo={playlist} token={token} mode='view' />
+            <Playlist key={index} playlistInfo={playlist} token={token} mode={'add'}/>
           ))}
         </ScrollView>
         <PlaySongBar routeToken={token} />
@@ -226,4 +229,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MainMyPlaylist;
+export default AddSongToPlaylist;

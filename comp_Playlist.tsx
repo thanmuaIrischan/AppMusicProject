@@ -2,6 +2,8 @@ import React, {useEffect, useState, useRef} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {ShowPlaylistNavigationProp} from './types';
+import { useSelector } from 'react-redux';
+import { RootState } from './store';
 
 export type PlaylistInfo = {
   id: string;
@@ -16,14 +18,44 @@ type PlaylistProps = {
   token: string;
 };
 
-const Playlist: React.FC<PlaylistProps> = ({playlistInfo, token}) => {
+const addSongToPlaylist = async (trackId, accessToken, playlistId) => {
+  const response = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+    method: 'POST', // Use the POST method
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json' // Ensure the content type is set to JSON
+    },
+    body: JSON.stringify({
+      uris: [`spotify:track:${trackId}`], // The uris field should be an array
+    }),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to add track', response.statusText);
+    return '';
+  } else {
+    console.log('Track added successfully');
+    return 'Track added successfully';
+  }
+};
+
+
+const Playlist: React.FC<PlaylistProps> = ({playlistInfo, token, mode}) => {
+  const addedTrackId = useSelector((state: RootState) => state.global.addedTrackId);
   const navigation = useNavigation<ShowPlaylistNavigationProp>();
   const {id, name, description, images} = playlistInfo || {}; // Kiểm tra playlistInfo trước khi truy cập
 
   const handlePress = () => {
     if (id && token) {
-      // Kiểm tra id và token trước khi navigate
-      navigation.navigate('ShowPlaylist', {playlistId: id, token});
+      if(mode === 'view'){
+        // Kiểm tra id và token trước khi navigate
+        navigation.navigate('ShowPlaylist', {playlistId: id, token});
+      }
+      else if (mode === 'add'){
+        addSongToPlaylist(addedTrackId, token, id);
+        //navigation.navigate('MainMyPlaylist', token);
+        navigation.goBack();
+      }
     }
   };
 

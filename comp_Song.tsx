@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
-import { setCurrentTrackId, setTimer, setCurrentPosition } from './globalSlice';
+import { setCurrentTrackId, setTimer, setCurrentPosition, setAddedTrackId } from './globalSlice';
+import {useNavigation } from '@react-navigation/native';
 
 
 interface SongProps {
@@ -21,7 +22,8 @@ interface SongProps {
   };
 }
 
-const Song: React.FC<SongProps> = ({songInfo}) => {
+const Song: React.FC<SongProps> = ({songInfo, token}) => {
+  const navigation = useNavigation();
   const currentPosition = useSelector((state: RootState) => state.global.currentPosition);
   const dispatch = useDispatch();
   if (!songInfo) {
@@ -34,6 +36,11 @@ const Song: React.FC<SongProps> = ({songInfo}) => {
   const clickHandle = async() => {
     dispatch(setCurrentTrackId(songInfo.id));
     dispatch(setTimer(0));
+  }
+
+  const addTrackHandle = async() => {
+    dispatch(setAddedTrackId(songInfo.id));
+    navigation.navigate('AddSongToPlayList', {token});
   }
 
   return (
@@ -49,7 +56,7 @@ const Song: React.FC<SongProps> = ({songInfo}) => {
       </View>
       <TouchableOpacity
         style={styles.buttonAddSongToPlayList}
-        onPress={() => setModalVisible(true)}>
+        onPress={() => addTrackHandle()}>
         <Image
           style={styles.image}
           source={require('./assets/AddSongToPlaylist.png')}
