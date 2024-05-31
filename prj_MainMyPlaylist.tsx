@@ -18,8 +18,8 @@ import SwitchMain from './comp_SwitchMainBar';
 import PlaySongBar from './comp_PlaySongBar';
 import Playlist, {PlaylistInfo} from './comp_Playlist';
 import HeaderBar from './comp_HeaderBar';
-import { useSelector } from 'react-redux';
-import { RootState } from './store';
+import {useSelector} from 'react-redux';
+import {RootState} from './store';
 import {useRoute, useIsFocused, useFocusEffect} from '@react-navigation/native'; // Import useRoute and useIsFocused
 import {saveTokenToGlobal} from './TokenService';
 import AddNewPlaylist from './prj_AddNewPlaylist';
@@ -85,7 +85,9 @@ function MainMyPlaylist() {
   const [playlists, setPlaylists] = useState<PlaylistInfo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const route = useRoute();
-  const currentTrackId = useSelector((state: RootState) => state.global.currentTrackId);
+  const currentTrackId = useSelector(
+    (state: RootState) => state.global.currentTrackId,
+  );
   const {token} = route.params; /// Retrieve the access token from route params
   const isFocused = useIsFocused();
 

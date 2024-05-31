@@ -8,10 +8,9 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from './store';
-import { setCurrentTrackId, setTimer, setCurrentPosition } from './globalSlice';
-
+import {useSelector, useDispatch} from 'react-redux';
+import {RootState} from './store';
+import {setCurrentTrackId, setTimer, setCurrentPosition} from './globalSlice';
 
 interface SongProps {
   songInfo: {
@@ -22,7 +21,9 @@ interface SongProps {
 }
 
 const Song: React.FC<SongProps> = ({songInfo}) => {
-  const currentPosition = useSelector((state: RootState) => state.global.currentPosition);
+  const currentPosition = useSelector(
+    (state: RootState) => state.global.currentPosition,
+  );
   const dispatch = useDispatch();
   if (!songInfo) {
     return null; // Trả về null hoặc một phần tử trống nếu không có songInfo
@@ -31,14 +32,16 @@ const Song: React.FC<SongProps> = ({songInfo}) => {
   const {name, artists, album} = songInfo;
   const [modalVisible, setModalVisible] = useState(false);
 
-  const clickHandle = async() => {
+  const clickHandle = async () => {
     dispatch(setCurrentTrackId(songInfo.id));
     dispatch(setTimer(0));
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.buttonPlaySong} onPress={() => clickHandle()}>
+      <TouchableOpacity
+        style={styles.buttonPlaySong}
+        onPress={() => clickHandle()}>
         <Image style={styles.image} source={require('./assets/PlaySong.png')} />
       </TouchableOpacity>
       <View style={styles.contentSong}>

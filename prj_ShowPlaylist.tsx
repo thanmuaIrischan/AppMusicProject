@@ -18,7 +18,6 @@ import PlaySongBar from './comp_PlaySongBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {getTokenFromGlobal} from './TokenService';
 
-
 // Function to get playlist details
 const getPlaylistDetails = async (playlistId, accessToken) => {
   try {
@@ -139,7 +138,7 @@ function ShowPlaylist() {
           ))}
         </ScrollView>
       </View>
-      <PlaySongBar token={token}/>
+      <PlaySongBar routeToken={token} />
     </SafeAreaView>
   );
 }

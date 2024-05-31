@@ -71,6 +71,7 @@ function Search() {
         name: item.name,
         artists: item.artists,
         album: item.album,
+        id: item.id,
       }));
       setSearchResults(songs);
     } catch (error) {

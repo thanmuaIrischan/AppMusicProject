@@ -15,7 +15,7 @@ import {getUserIdFromGlobal} from './TokenService';
 import {getTokenFromGlobal} from './TokenService';
 import {AddNewPlaylistNavigationProp, RootStackParamList} from './types';
 
-//import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 type AddNewPlaylistProps = {
   route: RouteProp<RootStackParamList, 'AddNewPlaylist'>;
@@ -86,7 +86,7 @@ const AddNewPlaylist: React.FC<AddNewPlaylistProps> = ({route}) => {
         console.error('No image URI provided');
         return;
       }
-      console.log('Access Token:', accessToken);
+      //console.log('Access Token:', accessToken);
 
       // Fetch the image data
       console.log('Fetching image data...');
@@ -134,12 +134,12 @@ const AddNewPlaylist: React.FC<AddNewPlaylistProps> = ({route}) => {
       quality: 1,
     };
 
-//     launchImageLibrary(options, response => {
-//       if (response.assets && response.assets.length > 0) {
-//         const selectedImage = response.assets[0];
-//         setImage(selectedImage.uri);
-//       }
-//     });
+    launchImageLibrary(options, response => {
+      if (response.assets && response.assets.length > 0) {
+        const selectedImage = response.assets[0];
+        setImage(selectedImage.uri);
+      }
+    });
   };
 
   return (
