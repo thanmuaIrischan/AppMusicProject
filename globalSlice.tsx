@@ -5,7 +5,6 @@ interface GlobalState {
   currentTrackId: string;
   trackQueue: string[];
   currentPosition: number;
-  timer: number;
   addedTrackId: string;
 }
 
@@ -13,7 +12,6 @@ const initialState: GlobalState = {
   currentTrackId: '',
   trackQueue: [],
   currentPosition: -1,
-  timer: 0,
   addedTrackId: '',
 };
 
@@ -33,9 +31,6 @@ const globalSlice = createSlice({
       state.currentPosition = action.payload;
       console.log('Position updated:', state.currentPosition);
     },
-    setTimer: (state, action: PayloadAction<number>) => {
-        state.timer = action.payload;
-    },
     setAddedTrackId: (state, action: PayloadAction<string>) => {
         state.addedTrackId = action.payload;
         console.log(state.addedTrackId);
@@ -43,5 +38,5 @@ const globalSlice = createSlice({
   },
 });
 
-export const { setCurrentTrackId, setTrackQueue, setCurrentPosition, setTimer, setAddedTrackId } = globalSlice.actions;
+export const { setCurrentTrackId, setTrackQueue, setCurrentPosition, setAddedTrackId } = globalSlice.actions;
 export default globalSlice.reducer;

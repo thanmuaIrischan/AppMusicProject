@@ -3,8 +3,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Login from './prj_Login';
 import MainSocial from './prj_MainSocial';
-import Test from './TestPlayMusic';
-import UserPlaylists from './TestLoadPlaylist';
 import MainMyPlaylist from './prj_MainMyPlaylist';
 import ShowPlaylist from './prj_ShowPlaylist';
 import AddNewPlaylist from './prj_AddNewPlaylist';
@@ -24,8 +22,6 @@ const Navigator = () => {
         screenOptions={{headerShown: false}}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="MainSocial" component={MainSocial} />
-        <Stack.Screen name="Test" component={Test} />
-        <Stack.Screen name="Playlist" component={UserPlaylists} />
         <Stack.Screen name="MainMyPlaylist" component={MainMyPlaylist} />
         <Stack.Screen name="ShowPlaylist" component={ShowPlaylist} />
         <Stack.Screen name="AddNewPlaylist" component={AddNewPlaylist} />

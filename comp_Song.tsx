@@ -13,8 +13,6 @@ import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from './store';
 import {
   setCurrentTrackId,
-  setTimer,
-  setCurrentPosition,
   setAddedTrackId,
 } from './globalSlice';
 import {useNavigation} from '@react-navigation/native';
@@ -42,7 +40,6 @@ const Song: React.FC<SongProps> = ({songInfo, token}) => {
 
   const clickHandle = async () => {
     dispatch(setCurrentTrackId(songInfo.id));
-    dispatch(setTimer(0));
   };
 
   const addTrackHandle = async () => {
