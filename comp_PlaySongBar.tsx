@@ -1,12 +1,22 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 import Slider from '@react-native-community/slider';
-import { useNavigation } from '@react-navigation/native';
-import TrackPlayer, { Capability, State, usePlaybackState, useProgress } from 'react-native-track-player';
+import {useNavigation} from '@react-navigation/native';
+import TrackPlayer, {
+  Capability,
+  State,
+  usePlaybackState,
+  useProgress,
+} from 'react-native-track-player';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from './store';
-import { setCurrentTrackId, setTrackQueue, setCurrentPosition, setTimer } from './globalSlice';
+import {useSelector, useDispatch} from 'react-redux';
+import {RootState} from './store';
+import {
+  setCurrentTrackId,
+  setTrackQueue,
+  setCurrentPosition,
+  setTimer,
+} from './globalSlice';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -19,10 +29,15 @@ const PlaySongBar = ({routeToken}) => {
   const [title, setTitle] = useState<string>('');
   const playbackState = usePlaybackState();
   const progress = useProgress();
+
   const navigation = useNavigation<AddNewPlaylistNavigationProp>();
-  const currentTrackId = useSelector((state: RootState) => state.global.currentTrackId);
+  const currentTrackId = useSelector(
+    (state: RootState) => state.global.currentTrackId,
+  );
   const trackQueue = useSelector((state: RootState) => state.global.trackQueue);
-  const currentPosition = useSelector((state: RootState) => state.global.currentPosition);
+  const currentPosition = useSelector(
+    (state: RootState) => state.global.currentPosition,
+  );
   const timer = useSelector((state: RootState) => state.global.timer);
   const dispatch = useDispatch();
   const [storedToken, setStoredToken] = useState('');
@@ -32,6 +47,15 @@ const PlaySongBar = ({routeToken}) => {
     setStoredToken(routeToken);
   }, [routeToken]);
 
+  // timer
+  useEffect(() => {
+    if (progress.duration && progress.position) {
+      setDuration(progress.duration);
+      setCurrentTime(progress.position);
+    }
+  }, [progress.position, progress.duration]);
+
+  //
   useEffect(() => {
     // Lấy token từ AsyncStorage khi component được render
     const getToken = async () => {
@@ -58,11 +82,24 @@ const PlaySongBar = ({routeToken}) => {
     }
   }, []);
 
-  const addTrackQueue = useCallback((newId) => {
-    const newQueue = [...trackQueue.slice(0, currentPosition + 1), newId];
-    dispatch(setTrackQueue(newQueue));
-    dispatch(setCurrentPosition(currentPosition + 1));
-  }, [dispatch, trackQueue, currentPosition]);
+  const addTrackQueue = useCallback(
+    newId => {
+      const newQueue = [...trackQueue.slice(0, currentPosition + 1), newId];
+      dispatch(setTrackQueue(newQueue));
+      dispatch(setCurrentPosition(currentPosition + 1));
+    },
+    [dispatch, trackQueue, currentPosition],
+  );
+
+  const handlePlayNew = useCallback(async () => {
+    try {
+      await TrackPlayer.reset();
+      await addSpotifyTrack(currentTrackId, routeToken);
+      await TrackPlayer.play();
+    } catch (error) {
+      console.error('Error playing track:', error);
+    }
+  }, [currentTrackId, routeToken]);
 
   const handlePrevTrack = useCallback(async () => {
     if (currentPosition > 0) {
@@ -82,19 +119,40 @@ const PlaySongBar = ({routeToken}) => {
     }
   }, [dispatch, trackQueue, currentPosition, routeToken, currentTrackId]);
 
+  const addSpotifyTrack = async (trackId, accessToken) => {
+    const trackInfo = await fetchTrackUrl(trackId, accessToken);
+
+    const trackUrl = trackInfo.preview_url;
+    setTitle(trackInfo.name);
+
+    if (trackUrl != '' || trackUrl != null) {
+      setIsPlayable(true);
+      await TrackPlayer.add({
+        id: trackId,
+        url: trackUrl,
+        title: trackInfo.name,
+      });
+    } else {
+      setIsPlayable(false);
+    }
+  };
+
   const fetchTrackUrl = async (trackId, accessToken) => {
-    const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await fetch(
+      `https://api.spotify.com/v1/tracks/${trackId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
     if (data.preview_url === '' || data.preview_url === null) {
-          console.error('Failed to fetch track URL');
-          return '';
-        }
+      console.error('Failed to fetch track URL');
+      return '';
+    }
 
     return {
       preview_url: data.preview_url || '',
@@ -152,24 +210,12 @@ const PlaySongBar = ({routeToken}) => {
     if (currentTrackId) {
       (async () => {
         await TrackPlayer.reset();
-        const trackInfo = await fetchTrackUrl(currentTrackId, routeToken);
-        if (trackInfo.preview_url) {
-          await TrackPlayer.add({
-            id: currentTrackId,
-            url: trackInfo.preview_url,
-            title: trackInfo.name,
-          });
-          setTitle(trackInfo.name);
-          setIsPlayable(true);
+        await addSpotifyTrack(currentTrackId, routeToken);
+        await TrackPlayer.play();
+        if (isPlayable) {
           if (!trackQueue.includes(currentTrackId)) {
             addTrackQueue(currentTrackId);
           }
-          else{
-            dispatch(setCurrentPosition(trackQueue.indexOf(currentTrackId)));
-          }
-          await TrackPlayer.play();
-        } else {
-          setIsPlayable(false);
         }
       })();
     }
