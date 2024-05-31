@@ -64,16 +64,6 @@ const PlaySongBar = ({routeToken}) => {
     dispatch(setCurrentPosition(currentPosition + 1));
   }, [dispatch, trackQueue, currentPosition]);
 
-  const handlePlayNew = useCallback(async () => {
-    try {
-      await TrackPlayer.reset();
-      await addSpotifyTrack(currentTrackId, routeToken);
-      await TrackPlayer.play();
-    } catch (error) {
-      console.error('Error playing track:', error);
-    }
-  }, [currentTrackId, routeToken]);
-
   const handlePrevTrack = useCallback(async () => {
     if (currentPosition > 0) {
       dispatch(setCurrentTrackId(trackQueue[currentPosition - 1]));
@@ -91,24 +81,6 @@ const PlaySongBar = ({routeToken}) => {
       addSpotifyTrack(currentTrackId, routeToken);
     }
   }, [dispatch, trackQueue, currentPosition, routeToken, currentTrackId]);
-
-  const addSpotifyTrack = async (trackId, accessToken) => {
-    const trackInfo = await fetchTrackUrl(trackId, accessToken);
-
-    const trackUrl = trackInfo.preview_url;
-    setTitle(trackInfo.name);
-
-    if (trackUrl != '' || trackUrl != null) {
-      setIsPlayable(true);
-      await TrackPlayer.add({
-        id: trackId,
-        url: trackUrl,
-        title: trackInfo.name,
-      });
-    } else {
-      setIsPlayable(false);
-    }
-  };
 
   const fetchTrackUrl = async (trackId, accessToken) => {
     const response = await fetch(`https://api.spotify.com/v1/tracks/${trackId}`, {
@@ -180,12 +152,24 @@ const PlaySongBar = ({routeToken}) => {
     if (currentTrackId) {
       (async () => {
         await TrackPlayer.reset();
-        await addSpotifyTrack(currentTrackId, routeToken);
-        await TrackPlayer.play();
-        if(isPlayable){
-          if(!trackQueue.includes(currentTrackId)){
+        const trackInfo = await fetchTrackUrl(currentTrackId, routeToken);
+        if (trackInfo.preview_url) {
+          await TrackPlayer.add({
+            id: currentTrackId,
+            url: trackInfo.preview_url,
+            title: trackInfo.name,
+          });
+          setTitle(trackInfo.name);
+          setIsPlayable(true);
+          if (!trackQueue.includes(currentTrackId)) {
             addTrackQueue(currentTrackId);
           }
+          else{
+            dispatch(setCurrentPosition(trackQueue.indexOf(currentTrackId)));
+          }
+          await TrackPlayer.play();
+        } else {
+          setIsPlayable(false);
         }
       })();
     }
