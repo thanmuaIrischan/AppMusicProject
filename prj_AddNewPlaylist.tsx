@@ -169,10 +169,10 @@ const AddNewPlaylist: React.FC<AddNewPlaylistProps> = ({route}) => {
             onChangeText={setDescription}
             multiline
           />
-          <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
+          {/*<TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
             <Text style={styles.imagePickerText}>Pick an image</Text>
           </TouchableOpacity>
-          {image && <Image source={{uri: image}} style={styles.previewImage} />}
+          {image && <Image source={{uri: image}} style={styles.previewImage} />}*/}
           <TouchableOpacity
             style={styles.createButton}
             onPress={handleCreatePlaylist}>
