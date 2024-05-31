@@ -8,17 +8,16 @@ import {
   Modal,
   Alert,
 } from 'react-native';
-<<<<<<< HEAD
+
 import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from './store';
-import {setCurrentTrackId, setTimer, setCurrentPosition} from './globalSlice';
-=======
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from './store';
-import { setCurrentTrackId, setTimer, setCurrentPosition, setAddedTrackId } from './globalSlice';
-import {useNavigation } from '@react-navigation/native';
-
->>>>>>> b911bc2ce29a96553aad040fafaa49b3b51755ff
+import {
+  setCurrentTrackId,
+  setTimer,
+  setCurrentPosition,
+  setAddedTrackId,
+} from './globalSlice';
+import {useNavigation} from '@react-navigation/native';
 
 interface SongProps {
   songInfo: {
@@ -28,16 +27,11 @@ interface SongProps {
   };
 }
 
-<<<<<<< HEAD
-const Song: React.FC<SongProps> = ({songInfo}) => {
+const Song: React.FC<SongProps> = ({songInfo, token}) => {
+  const navigation = useNavigation();
   const currentPosition = useSelector(
     (state: RootState) => state.global.currentPosition,
   );
-=======
-const Song: React.FC<SongProps> = ({songInfo, token}) => {
-  const navigation = useNavigation();
-  const currentPosition = useSelector((state: RootState) => state.global.currentPosition);
->>>>>>> b911bc2ce29a96553aad040fafaa49b3b51755ff
   const dispatch = useDispatch();
   if (!songInfo) {
     return null; // Trả về null hoặc một phần tử trống nếu không có songInfo
@@ -51,10 +45,10 @@ const Song: React.FC<SongProps> = ({songInfo, token}) => {
     dispatch(setTimer(0));
   };
 
-  const addTrackHandle = async() => {
+  const addTrackHandle = async () => {
     dispatch(setAddedTrackId(songInfo.id));
     navigation.navigate('AddSongToPlayList', {token});
-  }
+  };
 
   return (
     <View style={styles.container}>
